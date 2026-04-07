@@ -1,6 +1,8 @@
 import { ApiError } from "./errors.js";
 import type { ApiErrorPayload, ApiResponse, ClientOptions } from "./types.js";
 
+const DEFAULT_BASE_URL = "https://reseller.aceproxies.com/";
+
 interface RequestOptions {
   method?: string;
   body?: BodyInit;
@@ -13,7 +15,7 @@ export class HttpClient {
   readonly #fetch: typeof fetch;
 
   public constructor(options: ClientOptions) {
-    this.#baseUrl = options.baseUrl.replace(/\/+$/, "");
+    this.#baseUrl = (options.baseUrl ?? DEFAULT_BASE_URL).replace(/\/+$/, "");
     this.#token = options.token;
     this.#fetch = options.fetch ?? globalThis.fetch;
 

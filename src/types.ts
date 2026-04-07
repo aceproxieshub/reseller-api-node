@@ -13,7 +13,7 @@ export interface HealthResponse {
 }
 
 export interface ClientOptions {
-  baseUrl: string;
+  baseUrl?: string;
   token?: string;
   fetch?: typeof fetch;
 }

@@ -3,6 +3,27 @@ import { describe, expect, it, vi } from "vitest";
 import { createClient } from "../src/index.js";
 
 describe("client.health.check", () => {
+  it("uses the default base URL when baseUrl is omitted", async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
+      new Response(JSON.stringify({ data: { status: "ok" } }), {
+        status: 200,
+        headers: { "content-type": "application/json" },
+      }),
+    );
+
+    const client = createClient({
+      fetch: fetchMock,
+    });
+
+    await client.health.check();
+
+    const firstCall = fetchMock.mock.calls[0];
+    expect(firstCall).toBeDefined();
+
+    const [url] = firstCall!;
+    expect((url as URL).toString()).toBe("https://reseller.aceproxies.com/api/v1/health");
+  });
+
   it("returns the unwrapped health payload", async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
       new Response(JSON.stringify({ data: { status: "ok" } }), {

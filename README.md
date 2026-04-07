@@ -16,7 +16,6 @@ yarn add aceproxies-reseller-api
 import { createClient } from "aceproxies-reseller-api";
 
 const client = createClient({
-  baseUrl: "https://your-api-host.example",
   token: "your-reseller-token",
 });
 

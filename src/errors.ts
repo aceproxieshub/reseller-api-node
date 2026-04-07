@@ -1,4 +1,4 @@
-import type { ApiErrorPayload } from "./types.js";
+import type { ApiErrorPayload } from "./types/api.js";
 
 export class ApiError extends Error {
   public readonly status: number;

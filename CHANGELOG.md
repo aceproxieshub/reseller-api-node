@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- `balance.get()` resource implementation with tests and usage example.
+
 ## [0.0.1] - 2026-04-07
 
 ### Added

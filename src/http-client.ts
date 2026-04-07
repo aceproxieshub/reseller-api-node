@@ -1,5 +1,6 @@
 import { ApiError } from "./errors.js";
-import type { ApiErrorPayload, ApiResponse, ClientOptions } from "./types.js";
+import type { ApiErrorPayload, ApiResponse } from "./types/api.js";
+import type { ClientOptions } from "./types/client.js";
 
 const DEFAULT_BASE_URL = "https://reseller.aceproxies.com/";
 

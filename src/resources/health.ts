@@ -1,5 +1,5 @@
 import { HttpClient } from "../http-client.js";
-import type { HealthResponse } from "../types.js";
+import type { HealthResponse } from "./health.types.js";
 
 export class HealthResource {
   readonly #httpClient: HttpClient;

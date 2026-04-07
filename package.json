@@ -53,5 +53,8 @@
     "prettier": "^3.5.3",
     "typescript": "^5.8.3",
     "vitest": "^3.1.1"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.1"
   }
 }

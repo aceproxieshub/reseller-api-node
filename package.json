@@ -1,0 +1,57 @@
+{
+  "name": "aceproxies-reseller-api",
+  "version": "0.1.0",
+  "description": "TypeScript API client for the Aceproxies reseller API",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aceproxieshub/reseller-api-node.git"
+  },
+  "bugs": {
+    "url": "https://github.com/aceproxieshub/reseller-api-node/issues"
+  },
+  "homepage": "https://github.com/aceproxieshub/reseller-api-node#readme",
+  "keywords": [
+    "aceproxies",
+    "api",
+    "client",
+    "reseller"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "test": "vitest run --coverage",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.1",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "@vitest/coverage-v8": "^3.1.1",
+    "eslint": "^8.57.1",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.1"
+  }
+}

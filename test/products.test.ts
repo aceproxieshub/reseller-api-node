@@ -2,36 +2,16 @@ import { describe, expect, it, vi } from "vitest";
 
 import { createClient } from "../src/index.js";
 
-describe("client.health.check", () => {
-  it("uses the default base URL when baseUrl is omitted", async () => {
+describe("client.products.getTypes", () => {
+  it("returns the unwrapped product types payload", async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
-      new Response(JSON.stringify({ data: { status: "ok" } }), {
-        status: 200,
-        headers: { "content-type": "application/json" },
-      }),
-    );
-
-    const client = createClient({
-      fetch: fetchMock,
-    });
-
-    await client.health.check();
-
-    const firstCall = fetchMock.mock.calls[0];
-    expect(firstCall).toBeDefined();
-
-    const [url] = firstCall!;
-    expect((url as URL).toString()).toBe(
-      "https://reseller.aceproxies.com/api/v1/health",
-    );
-  });
-
-  it("returns the unwrapped health payload", async () => {
-    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
-      new Response(JSON.stringify({ data: { status: "ok" } }), {
-        status: 200,
-        headers: { "content-type": "application/json" },
-      }),
+      new Response(
+        JSON.stringify({ data: { types: ["mobile", "residential"] } }),
+        {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        },
+      ),
     );
 
     const client = createClient({
@@ -39,35 +19,34 @@ describe("client.health.check", () => {
       fetch: fetchMock,
     });
 
-    await expect(client.health.check()).resolves.toEqual({ status: "ok" });
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    await expect(client.products.getTypes()).resolves.toEqual({
+      types: ["mobile", "residential"],
+    });
 
     const firstCall = fetchMock.mock.calls[0];
     expect(firstCall).toBeDefined();
 
     const [url, init] = firstCall!;
-    expect(url).toBeInstanceOf(URL);
     expect((url as URL).toString()).toBe(
-      "https://reseller.example.test/api/v1/health",
+      "https://reseller.example.test/api/v1/products/types",
     );
     expect(init?.method).toBe("GET");
   });
 
-  it("sends the bearer token when provided", async () => {
+  it("sends the bearer token for authenticated product types requests", async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
-      new Response(JSON.stringify({ data: { status: "ok" } }), {
+      new Response(JSON.stringify({ data: { types: ["mobile"] } }), {
         status: 200,
         headers: { "content-type": "application/json" },
       }),
     );
 
     const client = createClient({
-      baseUrl: "https://reseller.example.test",
       token: "secret-token",
       fetch: fetchMock,
     });
 
-    await client.health.check();
+    await client.products.getTypes();
 
     const firstCall = fetchMock.mock.calls[0];
     expect(firstCall).toBeDefined();
@@ -75,10 +54,9 @@ describe("client.health.check", () => {
     const [, init] = firstCall!;
     const headers = new Headers(init?.headers);
     expect(headers.get("authorization")).toBe("Bearer secret-token");
-    expect(headers.get("accept")).toBe("application/json");
   });
 
-  it("throws ApiError when the API returns an error payload", async () => {
+  it("throws ApiError when the product types request fails", async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
       new Response(
         JSON.stringify({
@@ -99,7 +77,7 @@ describe("client.health.check", () => {
       fetch: fetchMock,
     });
 
-    await expect(client.health.check()).rejects.toMatchObject({
+    await expect(client.products.getTypes()).rejects.toMatchObject({
       name: "ApiError",
       status: 401,
       code: "UNAUTHORIZED",

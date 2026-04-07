@@ -3,6 +3,7 @@ export { ApiError } from "./errors.js";
 export type { ClientOptions } from "./types/client.js";
 export type { BalanceResponse } from "./resources/balance.types.js";
 export type { HealthResponse } from "./resources/health.types.js";
+export type { ProductTypesResponse } from "./resources/products.types.js";
 
 export { ResellerApiClient };
 

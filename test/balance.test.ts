@@ -5,10 +5,13 @@ import { createClient } from "../src/index.js";
 describe("client.balance.get", () => {
   it("returns the unwrapped balance payload", async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
-      new Response(JSON.stringify({ data: { balance: 18.59, currency: "USD" } }), {
-        status: 200,
-        headers: { "content-type": "application/json" },
-      }),
+      new Response(
+        JSON.stringify({ data: { balance: 18.59, currency: "USD" } }),
+        {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        },
+      ),
     );
 
     const client = createClient({
@@ -33,10 +36,13 @@ describe("client.balance.get", () => {
 
   it("sends the bearer token for authenticated balance requests", async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
-      new Response(JSON.stringify({ data: { balance: 18.59, currency: "USD" } }), {
-        status: 200,
-        headers: { "content-type": "application/json" },
-      }),
+      new Response(
+        JSON.stringify({ data: { balance: 18.59, currency: "USD" } }),
+        {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        },
+      ),
     );
 
     const client = createClient({

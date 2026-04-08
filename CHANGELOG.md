@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - `balance.get()` resource implementation with tests and usage example.
+- `products.list()` resource implementation with tests and usage example.
 - `products.getTypes()` resource implementation with tests and usage example.
 
 ### Changed

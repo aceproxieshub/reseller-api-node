@@ -32,6 +32,22 @@ export class HttpClient {
     return this.request<TData>(path, { ...options, method: "GET" });
   }
 
+  public async post<TData>(
+    path: string,
+    options: RequestOptions = {},
+  ): Promise<TData> {
+    return this.request<TData>(path, { ...options, method: "POST" });
+  }
+
+  public async postJson<TData, TBody>(path: string, body: TBody): Promise<TData> {
+    return this.post<TData>(path, {
+      body: JSON.stringify(body),
+      headers: {
+        "content-type": "application/json",
+      },
+    });
+  }
+
   public async request<TData>(
     path: string,
     options: RequestOptions = {},

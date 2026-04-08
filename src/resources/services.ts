@@ -3,6 +3,7 @@ import type {
   Service,
   ServiceBandwidthResponse,
   ServiceListResponse,
+  ServiceProxy,
 } from "./services.types.js";
 
 export class ServicesResource {
@@ -15,6 +16,12 @@ export class ServicesResource {
   public async getBandwidth(code: string): Promise<ServiceBandwidthResponse> {
     return this.#httpClient.get<ServiceBandwidthResponse>(
       `/api/v1/services/${code}/bandwidth`,
+    );
+  }
+
+  public async getProxyList(code: string): Promise<ServiceProxy[]> {
+    return this.#httpClient.get<ServiceProxy[]>(
+      `/api/v1/services/${code}/proxy-list`,
     );
   }
 

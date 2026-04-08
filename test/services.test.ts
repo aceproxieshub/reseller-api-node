@@ -2,6 +2,104 @@ import { describe, expect, it, vi } from "vitest";
 
 import { createClient } from "../src/index.js";
 
+describe("client.services.getProxyList", () => {
+  it("returns the unwrapped proxy list payload", async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          data: [
+            {
+              ip: "192.0.2.10",
+              password: "secret",
+              port: 8080,
+              username: "user-combined",
+            },
+          ],
+        }),
+        {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        },
+      ),
+    );
+
+    const client = createClient({
+      baseUrl: "https://reseller.example.test",
+      fetch: fetchMock,
+    });
+
+    await expect(client.services.getProxyList("svc-1")).resolves.toEqual([
+      {
+        ip: "192.0.2.10",
+        password: "secret",
+        port: 8080,
+        username: "user-combined",
+      },
+    ]);
+
+    const firstCall = fetchMock.mock.calls[0];
+    expect(firstCall).toBeDefined();
+
+    const [url, init] = firstCall!;
+    expect((url as URL).toString()).toBe(
+      "https://reseller.example.test/api/v1/services/svc-1/proxy-list",
+    );
+    expect(init?.method).toBe("GET");
+  });
+
+  it("sends the bearer token for authenticated proxy list requests", async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
+      new Response(JSON.stringify({ data: [] }), {
+        status: 200,
+        headers: { "content-type": "application/json" },
+      }),
+    );
+
+    const client = createClient({
+      token: "secret-token",
+      fetch: fetchMock,
+    });
+
+    await client.services.getProxyList("svc-1");
+
+    const firstCall = fetchMock.mock.calls[0];
+    expect(firstCall).toBeDefined();
+
+    const [, init] = firstCall!;
+    const headers = new Headers(init?.headers);
+    expect(headers.get("authorization")).toBe("Bearer secret-token");
+  });
+
+  it("throws ApiError when the proxy list request fails", async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          error: {
+            code: "NOT_FOUND",
+            message: "Service not found",
+          },
+        }),
+        {
+          status: 404,
+          headers: { "content-type": "application/json" },
+        },
+      ),
+    );
+
+    const client = createClient({
+      baseUrl: "https://reseller.example.test",
+      fetch: fetchMock,
+    });
+
+    await expect(client.services.getProxyList("missing-service")).rejects.toMatchObject({
+      name: "ApiError",
+      status: 404,
+      code: "NOT_FOUND",
+      message: "Service not found",
+    });
+  });
+});
+
 describe("client.services.getBandwidth", () => {
   it("returns the unwrapped service bandwidth payload", async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(

@@ -29,3 +29,10 @@ export interface ServiceBandwidth {
 export interface ServiceBandwidthResponse {
   bandwidth: ServiceBandwidth;
 }
+
+export interface ServiceProxy {
+  ip: string;
+  password: string;
+  port: number;
+  username: string;
+}

@@ -17,6 +17,11 @@ export type {
   ProductDuration,
   ProductTypesResponse,
 } from "./resources/products.types.js";
+export type {
+  Service,
+  ServiceAmount,
+  ServiceListResponse,
+} from "./resources/services.types.js";
 
 export { ResellerApiClient };
 

@@ -15,6 +15,7 @@ Currently available resources include:
 - `orders.create()`
 - `products.list()`
 - `products.getTypes()`
+- `services.getProxyList(code)`
 - `services.getBandwidth(code)`
 - `services.get(code)`
 - `services.list()`
@@ -58,6 +59,7 @@ Example scripts are available in the [examples](./examples) directory:
 - `examples/orders-create.mjs`
 - `examples/products-list.mjs`
 - `examples/products-get-types.mjs`
+- `examples/services-get-proxy-list.mjs`
 - `examples/services-get-bandwidth.mjs`
 - `examples/services-get.mjs`
 - `examples/services-list.mjs`

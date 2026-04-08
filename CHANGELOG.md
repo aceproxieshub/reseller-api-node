@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- `services.getProxyList()` resource implementation with tests and usage example.
 - `services.getBandwidth()` resource implementation with tests and usage example.
 
 ## [0.2.0] - 2026-04-08

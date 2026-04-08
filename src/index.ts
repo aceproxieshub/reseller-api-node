@@ -23,6 +23,7 @@ export type {
   ServiceBandwidth,
   ServiceBandwidthResponse,
   ServiceListResponse,
+  ServiceProxy,
 } from "./resources/services.types.js";
 
 export { ResellerApiClient };

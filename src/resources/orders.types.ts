@@ -34,3 +34,7 @@ export interface OrderListResponse {
   limit: number;
   page: number;
 }
+
+export interface OrderDetails extends Order {
+  isRecurring: boolean;
+}

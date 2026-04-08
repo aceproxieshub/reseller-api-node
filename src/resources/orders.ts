@@ -2,6 +2,7 @@ import { HttpClient } from "../http-client.js";
 import type {
   CreateOrderRequest,
   CreateOrderResponse,
+  OrderDetails,
   OrderListResponse,
 } from "./orders.types.js";
 
@@ -14,6 +15,10 @@ export class OrdersResource {
 
   public async list(): Promise<OrderListResponse> {
     return this.#httpClient.get<OrderListResponse>("/api/v1/orders");
+  }
+
+  public async get(id: string): Promise<OrderDetails> {
+    return this.#httpClient.get<OrderDetails>(`/api/v1/orders/${id}`);
   }
 
   public async create(payload: CreateOrderRequest): Promise<CreateOrderResponse> {

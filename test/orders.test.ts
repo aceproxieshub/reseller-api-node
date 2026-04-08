@@ -2,6 +2,125 @@ import { describe, expect, it, vi } from "vitest";
 
 import { createClient } from "../src/index.js";
 
+describe("client.orders.get", () => {
+  it("returns the unwrapped order details payload", async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          data: {
+            createdAt: "2026-04-08T10:00:00Z",
+            description: "Dedicated proxy order",
+            id: "order-1",
+            isRecurring: false,
+            status: "active",
+            total: {
+              amount: 12.5,
+              currency: "USD",
+            },
+          },
+        }),
+        {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        },
+      ),
+    );
+
+    const client = createClient({
+      baseUrl: "https://reseller.example.test",
+      fetch: fetchMock,
+    });
+
+    await expect(client.orders.get("order-1")).resolves.toEqual({
+      createdAt: "2026-04-08T10:00:00Z",
+      description: "Dedicated proxy order",
+      id: "order-1",
+      isRecurring: false,
+      status: "active",
+      total: {
+        amount: 12.5,
+        currency: "USD",
+      },
+    });
+
+    const firstCall = fetchMock.mock.calls[0];
+    expect(firstCall).toBeDefined();
+
+    const [url, init] = firstCall!;
+    expect((url as URL).toString()).toBe(
+      "https://reseller.example.test/api/v1/orders/order-1",
+    );
+    expect(init?.method).toBe("GET");
+  });
+
+  it("sends the bearer token for authenticated order detail requests", async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          data: {
+            createdAt: "2026-04-08T10:00:00Z",
+            description: "Dedicated proxy order",
+            id: "order-1",
+            isRecurring: false,
+            status: "active",
+            total: {
+              amount: 12.5,
+              currency: "USD",
+            },
+          },
+        }),
+        {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        },
+      ),
+    );
+
+    const client = createClient({
+      token: "secret-token",
+      fetch: fetchMock,
+    });
+
+    await client.orders.get("order-1");
+
+    const firstCall = fetchMock.mock.calls[0];
+    expect(firstCall).toBeDefined();
+
+    const [, init] = firstCall!;
+    const headers = new Headers(init?.headers);
+    expect(headers.get("authorization")).toBe("Bearer secret-token");
+  });
+
+  it("throws ApiError when the order detail request fails", async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          error: {
+            code: "NOT_FOUND",
+            message: "Order not found",
+          },
+        }),
+        {
+          status: 404,
+          headers: { "content-type": "application/json" },
+        },
+      ),
+    );
+
+    const client = createClient({
+      baseUrl: "https://reseller.example.test",
+      fetch: fetchMock,
+    });
+
+    await expect(client.orders.get("missing-order")).rejects.toMatchObject({
+      name: "ApiError",
+      status: 404,
+      code: "NOT_FOUND",
+      message: "Order not found",
+    });
+  });
+});
+
 describe("client.orders.list", () => {
   it("returns the unwrapped order list payload", async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(

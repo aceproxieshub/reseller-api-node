@@ -1,6 +1,6 @@
 {
   "name": "aceproxies-reseller-api",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "TypeScript API client for the Aceproxies reseller API",
   "license": "MIT",
   "type": "module",

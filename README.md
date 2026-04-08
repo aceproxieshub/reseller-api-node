@@ -10,6 +10,7 @@ Currently available resources include:
 
 - `health.check()`
 - `balance.get()`
+- `orders.get(id)`
 - `orders.list()`
 - `orders.create()`
 - `products.list()`
@@ -50,6 +51,7 @@ Example scripts are available in the [examples](./examples) directory:
 - `examples/health-check.mjs`
 - `examples/balance-get.mjs`
 - `examples/orders-list.mjs`
+- `examples/orders-get.mjs`
 - `examples/orders-create.mjs`
 - `examples/products-list.mjs`
 - `examples/products-get-types.mjs`

@@ -9,6 +9,7 @@ export type {
   CreateOrderResponse,
   Money,
   Order,
+  OrderDetails,
   OrderListResponse,
 } from "./resources/orders.types.js";
 export type {

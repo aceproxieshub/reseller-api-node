@@ -9,6 +9,10 @@ All notable changes to this project will be documented in this file.
 - `balance.get()` resource implementation with tests and usage example.
 - `products.getTypes()` resource implementation with tests and usage example.
 
+### Changed
+
+- Pinned TypeScript to `5.5.4` to match the supported range for the current `@typescript-eslint` toolchain and remove the compatibility warning.
+
 ## [0.0.1] - 2026-04-07
 
 ### Added

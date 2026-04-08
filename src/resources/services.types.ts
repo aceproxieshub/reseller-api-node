@@ -18,3 +18,14 @@ export interface ServiceListResponse {
   limit: number;
   page: number;
 }
+
+export interface ServiceBandwidth {
+  available: number;
+  total: number;
+  unit: string;
+  used: number;
+}
+
+export interface ServiceBandwidthResponse {
+  bandwidth: ServiceBandwidth;
+}

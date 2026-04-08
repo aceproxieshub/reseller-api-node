@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- `orders.create()` resource implementation with tests and usage example.
+
 ### Changed
 
 - Refined the README to provide a more professional package overview, clearer onboarding, and structured example and development guidance.

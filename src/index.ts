@@ -4,6 +4,11 @@ export type { ClientOptions } from "./types/client.js";
 export type { BalanceResponse } from "./resources/balance.types.js";
 export type { HealthResponse } from "./resources/health.types.js";
 export type {
+  CreateOrderItem,
+  CreateOrderRequest,
+  CreateOrderResponse,
+} from "./resources/orders.types.js";
+export type {
   Product,
   ProductDuration,
   ProductTypesResponse,

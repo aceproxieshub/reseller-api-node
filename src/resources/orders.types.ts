@@ -15,3 +15,22 @@ export interface CreateOrderResponse {
   id: string;
   status: string;
 }
+
+export interface Money {
+  amount: number;
+  currency: string;
+}
+
+export interface Order {
+  createdAt: string;
+  description: string;
+  id: string;
+  status: string;
+  total: Money;
+}
+
+export interface OrderListResponse {
+  items: Order[];
+  limit: number;
+  page: number;
+}

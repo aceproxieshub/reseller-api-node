@@ -25,6 +25,7 @@ export type {
   ServiceListResponse,
   ServiceProxy,
 } from "./resources/services.types.js";
+export type { VersionResponse } from "./resources/version.types.js";
 
 export { ResellerApiClient };
 

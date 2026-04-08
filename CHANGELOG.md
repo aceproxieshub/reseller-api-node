@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+
+- Refined the README to provide a more professional package overview, clearer onboarding, and structured example and development guidance.
+
 ## [0.1.0] - 2026-04-08
 
 ### Added

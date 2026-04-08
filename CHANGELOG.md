@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- `services.getBandwidth()` resource implementation with tests and usage example.
+
 ## [0.2.0] - 2026-04-08
 
 ### Added

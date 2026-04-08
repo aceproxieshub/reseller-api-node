@@ -20,6 +20,8 @@ export type {
 export type {
   Service,
   ServiceAmount,
+  ServiceBandwidth,
+  ServiceBandwidthResponse,
   ServiceListResponse,
 } from "./resources/services.types.js";
 

@@ -2,6 +2,116 @@ import { describe, expect, it, vi } from "vitest";
 
 import { createClient } from "../src/index.js";
 
+describe("client.services.getBandwidth", () => {
+  it("returns the unwrapped service bandwidth payload", async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          data: {
+            bandwidth: {
+              available: 70,
+              total: 100,
+              unit: "GB",
+              used: 30,
+            },
+          },
+        }),
+        {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        },
+      ),
+    );
+
+    const client = createClient({
+      baseUrl: "https://reseller.example.test",
+      fetch: fetchMock,
+    });
+
+    await expect(client.services.getBandwidth("svc-1")).resolves.toEqual({
+      bandwidth: {
+        available: 70,
+        total: 100,
+        unit: "GB",
+        used: 30,
+      },
+    });
+
+    const firstCall = fetchMock.mock.calls[0];
+    expect(firstCall).toBeDefined();
+
+    const [url, init] = firstCall!;
+    expect((url as URL).toString()).toBe(
+      "https://reseller.example.test/api/v1/services/svc-1/bandwidth",
+    );
+    expect(init?.method).toBe("GET");
+  });
+
+  it("sends the bearer token for authenticated service bandwidth requests", async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          data: {
+            bandwidth: {
+              available: 70,
+              total: 100,
+              unit: "GB",
+              used: 30,
+            },
+          },
+        }),
+        {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        },
+      ),
+    );
+
+    const client = createClient({
+      token: "secret-token",
+      fetch: fetchMock,
+    });
+
+    await client.services.getBandwidth("svc-1");
+
+    const firstCall = fetchMock.mock.calls[0];
+    expect(firstCall).toBeDefined();
+
+    const [, init] = firstCall!;
+    const headers = new Headers(init?.headers);
+    expect(headers.get("authorization")).toBe("Bearer secret-token");
+  });
+
+  it("throws ApiError when the service bandwidth request fails", async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          error: {
+            code: "NOT_FOUND",
+            message: "Service not found",
+          },
+        }),
+        {
+          status: 404,
+          headers: { "content-type": "application/json" },
+        },
+      ),
+    );
+
+    const client = createClient({
+      baseUrl: "https://reseller.example.test",
+      fetch: fetchMock,
+    });
+
+    await expect(client.services.getBandwidth("missing-service")).rejects.toMatchObject({
+      name: "ApiError",
+      status: 404,
+      code: "NOT_FOUND",
+      message: "Service not found",
+    });
+  });
+});
+
 describe("client.services.get", () => {
   it("returns the unwrapped service payload", async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(

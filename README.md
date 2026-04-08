@@ -19,6 +19,7 @@ Currently available resources include:
 - `services.getBandwidth(code)`
 - `services.get(code)`
 - `services.list()`
+- `version.get()`
 
 ## Installation
 
@@ -63,6 +64,7 @@ Example scripts are available in the [examples](./examples) directory:
 - `examples/services-get-bandwidth.mjs`
 - `examples/services-get.mjs`
 - `examples/services-list.mjs`
+- `examples/version-get.mjs`
 
 To run an example locally:
 

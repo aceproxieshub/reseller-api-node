@@ -15,6 +15,7 @@ Currently available resources include:
 - `orders.create()`
 - `products.list()`
 - `products.getTypes()`
+- `services.get(code)`
 - `services.list()`
 
 ## Installation
@@ -56,6 +57,7 @@ Example scripts are available in the [examples](./examples) directory:
 - `examples/orders-create.mjs`
 - `examples/products-list.mjs`
 - `examples/products-get-types.mjs`
+- `examples/services-get.mjs`
 - `examples/services-list.mjs`
 
 To run an example locally:

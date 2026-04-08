@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- `services.get()` resource implementation with tests and usage example.
 - `services.list()` resource implementation with tests and usage example.
 - `orders.get()` resource implementation with tests and usage example.
 - `orders.list()` resource implementation with tests and usage example.

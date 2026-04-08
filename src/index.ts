@@ -7,6 +7,9 @@ export type {
   CreateOrderItem,
   CreateOrderRequest,
   CreateOrderResponse,
+  Money,
+  Order,
+  OrderListResponse,
 } from "./resources/orders.types.js";
 export type {
   Product,

@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- `orders.list()` resource implementation with tests and usage example.
 - `orders.create()` resource implementation with tests and usage example.
 
 ### Changed

@@ -24,13 +24,13 @@ Currently available resources include:
 ## Installation
 
 ```bash
-npm install aceproxies-reseller-api
+npm install aceproxieshub/reseller-api-node
 ```
 
 or
 
 ```bash
-yarn add aceproxies-reseller-api
+yarn add aceproxieshub/reseller-api-node
 ```
 
 ## Quick Start

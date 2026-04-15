@@ -17,6 +17,7 @@ Currently available resources include:
 - `products.getTypes()`
 - `services.getProxyList(code)`
 - `services.getBandwidth(code)`
+- `services.getProlongations(code)`
 - `services.get(code)`
 - `services.list()`
 - `version.get()`
@@ -62,6 +63,7 @@ Example scripts are available in the [examples](./examples) directory:
 - `examples/products-get-types.mjs`
 - `examples/services-get-proxy-list.mjs`
 - `examples/services-get-bandwidth.mjs`
+- `examples/services-get-prolongations.mjs`
 - `examples/services-get.mjs`
 - `examples/services-list.mjs`
 - `examples/version-get.mjs`

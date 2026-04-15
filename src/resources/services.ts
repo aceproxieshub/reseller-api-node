@@ -3,6 +3,7 @@ import type {
   Service,
   ServiceBandwidthResponse,
   ServiceListResponse,
+  ServiceProlongation,
   ServiceProxy,
 } from "./services.types.js";
 
@@ -22,6 +23,12 @@ export class ServicesResource {
   public async getProxyList(code: string): Promise<ServiceProxy[]> {
     return this.#httpClient.get<ServiceProxy[]>(
       `/api/v1/services/${code}/proxy-list`,
+    );
+  }
+
+  public async getProlongations(code: string): Promise<ServiceProlongation[]> {
+    return this.#httpClient.get<ServiceProlongation[]>(
+      `/api/v1/services/${code}/prolongations`,
     );
   }
 

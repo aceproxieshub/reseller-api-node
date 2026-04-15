@@ -23,6 +23,7 @@ export type {
   ServiceBandwidth,
   ServiceBandwidthResponse,
   ServiceListResponse,
+  ServiceProlongation,
   ServiceProxy,
 } from "./resources/services.types.js";
 export type { VersionResponse } from "./resources/version.types.js";

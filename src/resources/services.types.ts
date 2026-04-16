@@ -30,6 +30,13 @@ export interface ServiceBandwidthResponse {
   bandwidth: ServiceBandwidth;
 }
 
+export interface ServiceProlongation {
+  durationDays: number;
+  durationId: string;
+  name: string;
+  price: number;
+}
+
 export interface ServiceProxy {
   ip: string;
   password: string;

@@ -18,6 +18,8 @@ export type {
   ProductTypesResponse,
 } from "./resources/products.types.js";
 export type {
+  CreateServiceWhitelistedIpRequest,
+  CreateServiceWhitelistedIpResponse,
   RequestServiceProlongation,
   Service,
   ServiceAmount,

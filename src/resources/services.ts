@@ -1,10 +1,12 @@
 import { HttpClient } from "../http-client.js";
 import type {
+  RequestServiceProlongation,
   Service,
   ServiceAuthCredentials,
   ServiceBandwidthResponse,
   ServiceListResponse,
   ServiceProlongation,
+  ServiceProlongationRequestResponse,
   ServiceProxy,
   ServiceWhitelistedIp,
   UpdateServiceAuthCredentialsRequest,
@@ -65,6 +67,16 @@ export class ServicesResource {
     return this.#httpClient.get<ServiceProlongation[]>(
       `/api/v1/services/${code}/prolongations`,
     );
+  }
+
+  public async requestProlongation(
+    code: string,
+    payload: RequestServiceProlongation,
+  ): Promise<ServiceProlongationRequestResponse> {
+    return this.#httpClient.postJson<
+      ServiceProlongationRequestResponse,
+      RequestServiceProlongation
+    >(`/api/v1/services/${code}/prolongations`, payload);
   }
 
   public async get(code: string): Promise<Service> {

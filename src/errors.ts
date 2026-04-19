@@ -14,7 +14,7 @@ export class ApiError extends Error {
     this.status = status;
     this.code =
       error && typeof error === "object" && "code" in error
-        ? error.code as string | undefined
+        ? (error.code as string | undefined)
         : undefined;
   }
 }

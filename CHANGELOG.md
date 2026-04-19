@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - `services.deleteAuthWhitelistedIp()` resource implementation with tests and usage example
+- `services.requestProlongation()` resource implementation with tests and usage example
 - `services.getAuthWhitelistedIps()` resource implementation with tests and usage example
 - `services.updateAuthCredentials()` resource implementation with tests and usage example
 - `services.getAuthCredentials()` resource implementation with tests and usage example

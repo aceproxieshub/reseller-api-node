@@ -443,6 +443,42 @@ describe("client.services.getProlongations", () => {
     expect(init?.method).toBe("GET");
   });
 
+  it("accepts successful responses when the API sends error as null", async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          data: [
+            {
+              durationDays: 30,
+              durationId: "duration-30",
+              name: "30 Days",
+              price: 19.99,
+            },
+          ],
+          error: null,
+        }),
+        {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        },
+      ),
+    );
+
+    const client = createClient({
+      baseUrl: "https://reseller.example.test",
+      fetch: fetchMock,
+    });
+
+    await expect(client.services.getProlongations("svc-1")).resolves.toEqual([
+      {
+        durationDays: 30,
+        durationId: "duration-30",
+        name: "30 Days",
+        price: 19.99,
+      },
+    ]);
+  });
+
   it("sends the bearer token for authenticated service prolongations requests", async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
       new Response(JSON.stringify({ data: [] }), {
@@ -494,6 +530,129 @@ describe("client.services.getProlongations", () => {
       status: 404,
       code: "NOT_FOUND",
       message: "Service not found",
+    });
+  });
+});
+
+describe("client.services.requestProlongation", () => {
+  it("returns the unwrapped service prolongation request payload", async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          data: {
+            durationId: "duration-30",
+            newExpirationDate: "2026-05-19T00:00:00Z",
+            quantity: 1,
+            status: "pending",
+          },
+        }),
+        {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        },
+      ),
+    );
+
+    const client = createClient({
+      baseUrl: "https://reseller.example.test",
+      fetch: fetchMock,
+    });
+
+    await expect(
+      client.services.requestProlongation("svc-1", {
+        durationId: "duration-30",
+        quantity: 1,
+      }),
+    ).resolves.toEqual({
+      durationId: "duration-30",
+      newExpirationDate: "2026-05-19T00:00:00Z",
+      quantity: 1,
+      status: "pending",
+    });
+
+    const firstCall = fetchMock.mock.calls[0];
+    expect(firstCall).toBeDefined();
+
+    const [url, init] = firstCall!;
+    expect((url as URL).toString()).toBe(
+      "https://reseller.example.test/api/v1/services/svc-1/prolongations",
+    );
+    expect(init?.method).toBe("POST");
+
+    const headers = new Headers(init?.headers);
+    expect(headers.get("content-type")).toBe("application/json");
+    expect(init?.body).toBe(
+      JSON.stringify({
+        durationId: "duration-30",
+        quantity: 1,
+      }),
+    );
+  });
+
+  it("sends the bearer token for authenticated service prolongation requests", async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          data: {
+            durationId: "duration-30",
+            newExpirationDate: "2026-05-19T00:00:00Z",
+            quantity: 1,
+            status: "pending",
+          },
+        }),
+        {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        },
+      ),
+    );
+
+    const client = createClient({
+      token: "secret-token",
+      fetch: fetchMock,
+    });
+
+    await client.services.requestProlongation("svc-1", {
+      durationId: "duration-30",
+      quantity: 1,
+    });
+
+    const firstCall = fetchMock.mock.calls[0];
+    expect(firstCall).toBeDefined();
+
+    const [, init] = firstCall!;
+    const headers = new Headers(init?.headers);
+    expect(headers.get("authorization")).toBe("Bearer secret-token");
+  });
+
+  it("throws ApiError with the patch response message when the prolongation request fails", async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          error: true,
+          message: "Prolongation is not available for this service",
+        }),
+        {
+          status: 403,
+          headers: { "content-type": "application/json" },
+        },
+      ),
+    );
+
+    const client = createClient({
+      baseUrl: "https://reseller.example.test",
+      fetch: fetchMock,
+    });
+
+    await expect(
+      client.services.requestProlongation("svc-1", {
+        durationId: "duration-30",
+        quantity: 1,
+      }),
+    ).rejects.toMatchObject({
+      name: "ApiError",
+      status: 403,
+      message: "Prolongation is not available for this service",
     });
   });
 });

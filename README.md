@@ -18,6 +18,7 @@ Currently available resources include:
 - `services.getAuthCredentials(code)`
 - `services.getAuthWhitelistedIps(code)`
 - `services.deleteAuthWhitelistedIp(code, ip)`
+- `services.requestProlongation(code, payload)`
 - `services.updateAuthCredentials(code, payload)`
 - `services.getProxyList(code)`
 - `services.getBandwidth(code)`
@@ -68,6 +69,7 @@ Example scripts are available in the [examples](./examples) directory:
 - `examples/services-get-auth-credentials.mjs`
 - `examples/services-get-auth-whitelisted-ips.mjs`
 - `examples/services-delete-auth-whitelisted-ip.mjs`
+- `examples/services-request-prolongation.mjs`
 - `examples/services-update-auth-credentials.mjs`
 - `examples/services-get-proxy-list.mjs`
 - `examples/services-get-bandwidth.mjs`

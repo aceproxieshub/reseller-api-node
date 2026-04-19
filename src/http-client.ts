@@ -1,5 +1,5 @@
 import { ApiError } from "./errors.js";
-import type { ApiErrorPayload, ApiResponse } from "./types/api.js";
+import type { ApiErrorPayload, ApiResponse, PatchApiResponse } from "./types/api.js";
 import type { ClientOptions } from "./types/client.js";
 
 const DEFAULT_BASE_URL = "https://reseller.aceproxies.com/";
@@ -64,6 +64,13 @@ export class HttpClient {
     });
   }
 
+  public async delete(
+    path: string,
+    options: RequestOptions = {},
+  ): Promise<void> {
+    return this.requestWithoutData(path, { ...options, method: "DELETE" });
+  }
+
   public async request<TData>(
     path: string,
     options: RequestOptions = {},
@@ -96,6 +103,32 @@ export class HttpClient {
     return payload.data;
   }
 
+  public async requestWithoutData(
+    path: string,
+    options: RequestOptions = {},
+  ): Promise<void> {
+    const requestInit: RequestInit = {
+      method: options.method ?? "GET",
+      headers: this.buildHeaders(options.headers),
+      ...(options.body ? { body: options.body } : {}),
+    };
+
+    const response = await this.#fetch(
+      new URL(path, `${this.#baseUrl}/`),
+      requestInit,
+    );
+
+    const payload = await this.parseResponse(response);
+
+    if (!response.ok) {
+      throw this.toApiError(response.status, payload);
+    }
+
+    if (typeof payload.error !== "undefined" && payload.error !== false) {
+      throw this.toApiError(response.status, payload);
+    }
+  }
+
   private buildHeaders(headers?: HeadersInit): Headers {
     const result = new Headers(headers);
     result.set("accept", "application/json");
@@ -123,7 +156,25 @@ export class HttpClient {
     }
   }
 
-  private toApiError(status: number, error?: ApiErrorPayload): ApiError {
-    return new ApiError(error?.message ?? "API request failed.", status, error);
+  private toApiError(
+    status: number,
+    payload?: ApiErrorPayload | PatchApiResponse | boolean,
+  ): ApiError {
+    if (payload && typeof payload === "object" && "error" in payload) {
+      const errorPayload =
+        payload.error && typeof payload.error === "object" ? payload.error : undefined;
+      return new ApiError(
+        errorPayload?.message ?? payload.message ?? "API request failed.",
+        status,
+        errorPayload ?? payload,
+      );
+    }
+
+    const errorPayload = payload && typeof payload === "object" ? payload : undefined;
+    return new ApiError(
+      errorPayload?.message ?? "API request failed.",
+      status,
+      errorPayload,
+    );
   }
 }

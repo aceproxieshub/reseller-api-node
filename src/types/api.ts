@@ -3,7 +3,13 @@ export interface ApiErrorPayload {
   message?: string;
 }
 
+export interface PatchApiResponse {
+  error?: ApiErrorPayload | boolean;
+  message?: string;
+}
+
 export interface ApiResponse<TData> {
   data?: TData;
-  error?: ApiErrorPayload;
+  error?: ApiErrorPayload | boolean;
+  message?: string;
 }

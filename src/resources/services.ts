@@ -6,6 +6,7 @@ import type {
   ServiceListResponse,
   ServiceProlongation,
   ServiceProxy,
+  UpdateServiceAuthCredentialsRequest,
 } from "./services.types.js";
 
 export class ServicesResource {
@@ -27,6 +28,16 @@ export class ServicesResource {
     return this.#httpClient.get<ServiceAuthCredentials>(
       `/api/v1/services/${code}/auth/credentials`,
     );
+  }
+
+  public async updateAuthCredentials(
+    code: string,
+    payload: UpdateServiceAuthCredentialsRequest,
+  ): Promise<ServiceAuthCredentials> {
+    return this.#httpClient.putJson<
+      ServiceAuthCredentials,
+      UpdateServiceAuthCredentialsRequest
+    >(`/api/v1/services/${code}/auth/credentials`, payload);
   }
 
   public async getProxyList(code: string): Promise<ServiceProxy[]> {

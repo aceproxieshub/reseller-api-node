@@ -102,6 +102,126 @@ describe("client.services.getAuthCredentials", () => {
   });
 });
 
+describe("client.services.updateAuthCredentials", () => {
+  it("returns the unwrapped updated service auth credentials payload", async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          data: {
+            password: "new-secret",
+            username: "new-user",
+          },
+        }),
+        {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        },
+      ),
+    );
+
+    const client = createClient({
+      baseUrl: "https://reseller.example.test",
+      fetch: fetchMock,
+    });
+
+    await expect(
+      client.services.updateAuthCredentials("svc-1", {
+        password: "new-secret",
+        username: "new-user",
+      }),
+    ).resolves.toEqual({
+      password: "new-secret",
+      username: "new-user",
+    });
+
+    const firstCall = fetchMock.mock.calls[0];
+    expect(firstCall).toBeDefined();
+
+    const [url, init] = firstCall!;
+    expect((url as URL).toString()).toBe(
+      "https://reseller.example.test/api/v1/services/svc-1/auth/credentials",
+    );
+    expect(init?.method).toBe("PUT");
+
+    const headers = new Headers(init?.headers);
+    expect(headers.get("content-type")).toBe("application/json");
+    expect(init?.body).toBe(
+      JSON.stringify({
+        password: "new-secret",
+        username: "new-user",
+      }),
+    );
+  });
+
+  it("sends the bearer token for authenticated service auth credentials updates", async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          data: {
+            password: "new-secret",
+            username: "new-user",
+          },
+        }),
+        {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        },
+      ),
+    );
+
+    const client = createClient({
+      token: "secret-token",
+      fetch: fetchMock,
+    });
+
+    await client.services.updateAuthCredentials("svc-1", {
+      password: "new-secret",
+      username: "new-user",
+    });
+
+    const firstCall = fetchMock.mock.calls[0];
+    expect(firstCall).toBeDefined();
+
+    const [, init] = firstCall!;
+    const headers = new Headers(init?.headers);
+    expect(headers.get("authorization")).toBe("Bearer secret-token");
+  });
+
+  it("throws ApiError when the service auth credentials update fails", async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          error: {
+            code: "CONFLICT",
+            message: "Credentials already in use",
+          },
+        }),
+        {
+          status: 409,
+          headers: { "content-type": "application/json" },
+        },
+      ),
+    );
+
+    const client = createClient({
+      baseUrl: "https://reseller.example.test",
+      fetch: fetchMock,
+    });
+
+    await expect(
+      client.services.updateAuthCredentials("svc-1", {
+        password: "new-secret",
+        username: "new-user",
+      }),
+    ).rejects.toMatchObject({
+      name: "ApiError",
+      status: 409,
+      code: "CONFLICT",
+      message: "Credentials already in use",
+    });
+  });
+});
+
 describe("client.services.getProlongations", () => {
   it("returns the unwrapped service prolongations payload", async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(

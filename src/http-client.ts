@@ -48,6 +48,22 @@ export class HttpClient {
     });
   }
 
+  public async put<TData>(
+    path: string,
+    options: RequestOptions = {},
+  ): Promise<TData> {
+    return this.request<TData>(path, { ...options, method: "PUT" });
+  }
+
+  public async putJson<TData, TBody>(path: string, body: TBody): Promise<TData> {
+    return this.put<TData>(path, {
+      body: JSON.stringify(body),
+      headers: {
+        "content-type": "application/json",
+      },
+    });
+  }
+
   public async request<TData>(
     path: string,
     options: RequestOptions = {},

@@ -26,6 +26,7 @@ export type {
   ServiceListResponse,
   ServiceProlongation,
   ServiceProxy,
+  UpdateServiceAuthCredentialsRequest,
 } from "./resources/services.types.js";
 export type { VersionResponse } from "./resources/version.types.js";
 

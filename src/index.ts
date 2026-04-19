@@ -24,6 +24,7 @@ export type {
   Service,
   ServiceAmount,
   ServiceAuthCredentials,
+  ServiceAuthMethod,
   ServiceBandwidth,
   ServiceBandwidthResponse,
   ServiceListResponse,
@@ -31,6 +32,8 @@ export type {
   ServiceProlongationRequestResponse,
   ServiceProxy,
   ServiceWhitelistedIp,
+  UpdateServiceAuthPayload,
+  UpdateServiceRequest,
   UpdateServiceAuthCredentialsRequest,
 } from "./resources/services.types.js";
 export type { VersionResponse } from "./resources/version.types.js";

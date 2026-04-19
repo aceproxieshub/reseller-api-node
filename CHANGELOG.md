@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 - `services.updateAuthCredentials()` resource implementation with tests and usage example
 - `services.getAuthCredentials()` resource implementation with tests and usage example
 - `services.getProlongations()` resource implementation with tests and usage example
+- `services.update()` resource implementation with tests and usage example
 
 ## [0.3.1] - 2026-04-09
 

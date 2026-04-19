@@ -1,5 +1,9 @@
 import { ApiError } from "./errors.js";
-import type { ApiErrorPayload, ApiResponse, PatchApiResponse} from "./types/api.js";
+import type {
+  ApiErrorPayload,
+  ApiResponse,
+  PatchApiResponse,
+} from "./types/api.js";
 import type { ClientOptions } from "./types/client.js";
 
 const DEFAULT_BASE_URL = "https://reseller.aceproxies.com/";
@@ -64,6 +68,44 @@ export class HttpClient {
     });
   }
 
+  public async patch<TData>(
+    path: string,
+    options: RequestOptions = {},
+  ): Promise<TData> {
+    return this.request<TData>(path, { ...options, method: "PATCH" });
+  }
+
+  public async patchJson<TData, TBody>(
+    path: string,
+    body: TBody,
+  ): Promise<TData> {
+    return this.patch<TData>(path, {
+      body: JSON.stringify(body),
+      headers: {
+        "content-type": "application/json",
+      },
+    });
+  }
+
+  public async patchWithoutData(
+    path: string,
+    options: RequestOptions = {},
+  ): Promise<void> {
+    return this.requestWithoutData(path, { ...options, method: "PATCH" });
+  }
+
+  public async patchJsonWithoutData<TBody>(
+    path: string,
+    body: TBody,
+  ): Promise<void> {
+    return this.patchWithoutData(path, {
+      body: JSON.stringify(body),
+      headers: {
+        "content-type": "application/json",
+      },
+    });
+  }
+
   public async delete(
     path: string,
     options: RequestOptions = {},
@@ -92,11 +134,7 @@ export class HttpClient {
       throw this.toApiError(response.status, payload);
     }
 
-    if (
-      typeof payload.error !== "undefined" &&
-      payload.error !== null &&
-      payload.error !== false
-    ) {
+    if (this.hasError(payload)) {
       throw this.toApiError(response.status, payload);
     }
 
@@ -128,7 +166,7 @@ export class HttpClient {
       throw this.toApiError(response.status, payload);
     }
 
-    if (typeof payload.error !== "undefined" && payload.error !== false) {
+    if (this.hasError(payload)) {
       throw this.toApiError(response.status, payload);
     }
   }
@@ -158,6 +196,24 @@ export class HttpClient {
     } catch {
       throw new ApiError("API response was not valid JSON.", response.status);
     }
+  }
+
+  private hasError(
+    payload: ApiResponse<unknown> | PatchApiResponse,
+  ): boolean {
+    if (typeof payload.error === "undefined" || payload.error === null) {
+      return false;
+    }
+
+    if (payload.error === false) {
+      return false;
+    }
+
+    if (typeof payload.error === "object") {
+      return Object.keys(payload.error).length > 0;
+    }
+
+    return true;
   }
 
   private toApiError(

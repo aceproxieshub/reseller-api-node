@@ -35,9 +35,19 @@ export interface ServiceAuthCredentials {
   username: string;
 }
 
+export type ServiceAuthMethod = "combined" | "ip" | "password";
+
 export interface UpdateServiceAuthCredentialsRequest {
   password: string;
   username: string;
+}
+
+export interface UpdateServiceAuthPayload {
+  method: ServiceAuthMethod;
+}
+
+export interface UpdateServiceRequest {
+  auth: UpdateServiceAuthPayload;
 }
 
 export interface ServiceWhitelistedIp {

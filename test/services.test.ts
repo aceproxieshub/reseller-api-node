@@ -770,6 +770,130 @@ describe("client.services.requestProlongation", () => {
   });
 });
 
+describe("client.services.update", () => {
+  it("patches the service auth method", async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
+      new Response(JSON.stringify({ error: false }), {
+        status: 200,
+        headers: { "content-type": "application/json" },
+      }),
+    );
+
+    const client = createClient({
+      baseUrl: "https://reseller.example.test",
+      fetch: fetchMock,
+    });
+
+    await expect(
+      client.services.update("svc-1", {
+        auth: {
+          method: "ip",
+        },
+      }),
+    ).resolves.toBeUndefined();
+
+    const firstCall = fetchMock.mock.calls[0];
+    expect(firstCall).toBeDefined();
+
+    const [url, init] = firstCall!;
+    expect((url as URL).toString()).toBe(
+      "https://reseller.example.test/api/v1/services/svc-1",
+    );
+    expect(init?.method).toBe("PATCH");
+
+    const headers = new Headers(init?.headers);
+    expect(headers.get("content-type")).toBe("application/json");
+    expect(init?.body).toBe(
+      JSON.stringify({
+        auth: {
+          method: "ip",
+        },
+      }),
+    );
+  });
+
+  it("accepts swagger-style patch success responses with an empty error object", async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
+      new Response(JSON.stringify({ error: {} }), {
+        status: 200,
+        headers: { "content-type": "application/json" },
+      }),
+    );
+
+    const client = createClient({
+      baseUrl: "https://reseller.example.test",
+      fetch: fetchMock,
+    });
+
+    await expect(
+      client.services.update("svc-1", {
+        auth: {
+          method: "combined",
+        },
+      }),
+    ).resolves.toBeUndefined();
+  });
+
+  it("sends the bearer token for authenticated service updates", async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
+      new Response(JSON.stringify({ error: false }), {
+        status: 200,
+        headers: { "content-type": "application/json" },
+      }),
+    );
+
+    const client = createClient({
+      token: "secret-token",
+      fetch: fetchMock,
+    });
+
+    await client.services.update("svc-1", {
+      auth: {
+        method: "password",
+      },
+    });
+
+    const firstCall = fetchMock.mock.calls[0];
+    expect(firstCall).toBeDefined();
+
+    const [, init] = firstCall!;
+    const headers = new Headers(init?.headers);
+    expect(headers.get("authorization")).toBe("Bearer secret-token");
+  });
+
+  it("throws ApiError with the patch response message when the service update fails", async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          error: true,
+          message: "Auth method cannot be changed for this service",
+        }),
+        {
+          status: 400,
+          headers: { "content-type": "application/json" },
+        },
+      ),
+    );
+
+    const client = createClient({
+      baseUrl: "https://reseller.example.test",
+      fetch: fetchMock,
+    });
+
+    await expect(
+      client.services.update("svc-1", {
+        auth: {
+          method: "ip",
+        },
+      }),
+    ).rejects.toMatchObject({
+      name: "ApiError",
+      status: 400,
+      message: "Auth method cannot be changed for this service",
+    });
+  });
+});
+
 describe("client.services.getProxyList", () => {
   it("returns the unwrapped proxy list payload", async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(

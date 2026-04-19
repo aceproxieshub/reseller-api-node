@@ -11,6 +11,7 @@ import type {
   ServiceProlongationRequestResponse,
   ServiceProxy,
   ServiceWhitelistedIp,
+  UpdateServiceRequest,
   UpdateServiceAuthCredentialsRequest,
 } from "./services.types.js";
 
@@ -89,6 +90,10 @@ export class ServicesResource {
       ServiceProlongationRequestResponse,
       RequestServiceProlongation
     >(`/api/v1/services/${code}/prolongations`, payload);
+  }
+
+  public async update(code: string, payload: UpdateServiceRequest): Promise<void> {
+    return this.#httpClient.patchJsonWithoutData(`/api/v1/services/${code}`, payload);
   }
 
   public async get(code: string): Promise<Service> {

@@ -45,6 +45,14 @@ export interface ServiceWhitelistedIp {
   ip: string;
 }
 
+export interface CreateServiceWhitelistedIpRequest {
+  ip: string;
+}
+
+export interface CreateServiceWhitelistedIpResponse {
+  ip: string;
+}
+
 export interface RequestServiceProlongation {
   durationId: string;
   quantity: number;

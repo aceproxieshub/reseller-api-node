@@ -318,6 +318,119 @@ describe("client.services.getAuthWhitelistedIps", () => {
   });
 });
 
+describe("client.services.addAuthWhitelistedIp", () => {
+  it("returns the unwrapped created auth whitelisted IP payload", async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          data: {
+            ip: "203.0.113.10",
+          },
+        }),
+        {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        },
+      ),
+    );
+
+    const client = createClient({
+      baseUrl: "https://reseller.example.test",
+      fetch: fetchMock,
+    });
+
+    await expect(
+      client.services.addAuthWhitelistedIp("svc-1", {
+        ip: "203.0.113.10",
+      }),
+    ).resolves.toEqual({
+      ip: "203.0.113.10",
+    });
+
+    const firstCall = fetchMock.mock.calls[0];
+    expect(firstCall).toBeDefined();
+
+    const [url, init] = firstCall!;
+    expect((url as URL).toString()).toBe(
+      "https://reseller.example.test/api/v1/services/svc-1/auth/whitelisted-ips",
+    );
+    expect(init?.method).toBe("POST");
+
+    const headers = new Headers(init?.headers);
+    expect(headers.get("content-type")).toBe("application/json");
+    expect(init?.body).toBe(
+      JSON.stringify({
+        ip: "203.0.113.10",
+      }),
+    );
+  });
+
+  it("sends the bearer token for authenticated service auth whitelisted IP creates", async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          data: {
+            ip: "203.0.113.10",
+          },
+        }),
+        {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        },
+      ),
+    );
+
+    const client = createClient({
+      token: "secret-token",
+      fetch: fetchMock,
+    });
+
+    await client.services.addAuthWhitelistedIp("svc-1", {
+      ip: "203.0.113.10",
+    });
+
+    const firstCall = fetchMock.mock.calls[0];
+    expect(firstCall).toBeDefined();
+
+    const [, init] = firstCall!;
+    const headers = new Headers(init?.headers);
+    expect(headers.get("authorization")).toBe("Bearer secret-token");
+  });
+
+  it("throws ApiError when the auth whitelisted IP create request fails", async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          error: {
+            code: "NOT_FOUND",
+            message: "Service not found",
+          },
+        }),
+        {
+          status: 404,
+          headers: { "content-type": "application/json" },
+        },
+      ),
+    );
+
+    const client = createClient({
+      baseUrl: "https://reseller.example.test",
+      fetch: fetchMock,
+    });
+
+    await expect(
+      client.services.addAuthWhitelistedIp("missing-service", {
+        ip: "203.0.113.10",
+      }),
+    ).rejects.toMatchObject({
+      name: "ApiError",
+      status: 404,
+      code: "NOT_FOUND",
+      message: "Service not found",
+    });
+  });
+});
+
 describe("client.services.deleteAuthWhitelistedIp", () => {
   it("deletes the service auth whitelisted IP", async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(

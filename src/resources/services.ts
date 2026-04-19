@@ -1,5 +1,7 @@
 import { HttpClient } from "../http-client.js";
 import type {
+  CreateServiceWhitelistedIpRequest,
+  CreateServiceWhitelistedIpResponse,
   RequestServiceProlongation,
   Service,
   ServiceAuthCredentials,
@@ -49,6 +51,16 @@ export class ServicesResource {
     return this.#httpClient.get<ServiceWhitelistedIp[]>(
       `/api/v1/services/${code}/auth/whitelisted-ips`,
     );
+  }
+
+  public async addAuthWhitelistedIp(
+    code: string,
+    payload: CreateServiceWhitelistedIpRequest,
+  ): Promise<CreateServiceWhitelistedIpResponse> {
+    return this.#httpClient.postJson<
+      CreateServiceWhitelistedIpResponse,
+      CreateServiceWhitelistedIpRequest
+    >(`/api/v1/services/${code}/auth/whitelisted-ips`, payload);
   }
 
   public async deleteAuthWhitelistedIp(code: string, ip: string): Promise<void> {

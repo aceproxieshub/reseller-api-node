@@ -20,6 +20,7 @@ export type {
 export type {
   Service,
   ServiceAmount,
+  ServiceAuthCredentials,
   ServiceBandwidth,
   ServiceBandwidthResponse,
   ServiceListResponse,

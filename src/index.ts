@@ -18,6 +18,7 @@ export type {
   ProductTypesResponse,
 } from "./resources/products.types.js";
 export type {
+  RequestServiceProlongation,
   Service,
   ServiceAmount,
   ServiceAuthCredentials,
@@ -25,6 +26,7 @@ export type {
   ServiceBandwidthResponse,
   ServiceListResponse,
   ServiceProlongation,
+  ServiceProlongationRequestResponse,
   ServiceProxy,
   ServiceWhitelistedIp,
   UpdateServiceAuthCredentialsRequest,

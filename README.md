@@ -16,6 +16,7 @@ Currently available resources include:
 - `products.list()`
 - `products.getTypes()`
 - `services.getAuthCredentials(code)`
+- `services.getAuthWhitelistedIps(code)`
 - `services.updateAuthCredentials(code, payload)`
 - `services.getProxyList(code)`
 - `services.getBandwidth(code)`
@@ -64,6 +65,7 @@ Example scripts are available in the [examples](./examples) directory:
 - `examples/products-list.mjs`
 - `examples/products-get-types.mjs`
 - `examples/services-get-auth-credentials.mjs`
+- `examples/services-get-auth-whitelisted-ips.mjs`
 - `examples/services-update-auth-credentials.mjs`
 - `examples/services-get-proxy-list.mjs`
 - `examples/services-get-bandwidth.mjs`

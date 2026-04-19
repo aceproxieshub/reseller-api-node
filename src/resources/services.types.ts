@@ -40,6 +40,11 @@ export interface UpdateServiceAuthCredentialsRequest {
   username: string;
 }
 
+export interface ServiceWhitelistedIp {
+  description: string;
+  ip: string;
+}
+
 export interface ServiceProlongation {
   durationDays: number;
   durationId: string;

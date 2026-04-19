@@ -6,6 +6,7 @@ import type {
   ServiceListResponse,
   ServiceProlongation,
   ServiceProxy,
+  ServiceWhitelistedIp,
   UpdateServiceAuthCredentialsRequest,
 } from "./services.types.js";
 
@@ -38,6 +39,14 @@ export class ServicesResource {
       ServiceAuthCredentials,
       UpdateServiceAuthCredentialsRequest
     >(`/api/v1/services/${code}/auth/credentials`, payload);
+  }
+
+  public async getAuthWhitelistedIps(
+    code: string,
+  ): Promise<ServiceWhitelistedIp[]> {
+    return this.#httpClient.get<ServiceWhitelistedIp[]>(
+      `/api/v1/services/${code}/auth/whitelisted-ips`,
+    );
   }
 
   public async getProxyList(code: string): Promise<ServiceProxy[]> {

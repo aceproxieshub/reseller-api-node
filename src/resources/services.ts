@@ -49,6 +49,12 @@ export class ServicesResource {
     );
   }
 
+  public async deleteAuthWhitelistedIp(code: string, ip: string): Promise<void> {
+    return this.#httpClient.delete(
+      `/api/v1/services/${code}/auth/whitelisted-ips/${ip}`,
+    );
+  }
+
   public async getProxyList(code: string): Promise<ServiceProxy[]> {
     return this.#httpClient.get<ServiceProxy[]>(
       `/api/v1/services/${code}/proxy-list`,

@@ -1,6 +1,7 @@
 import { HttpClient } from "../http-client.js";
 import type {
   Service,
+  ServiceAuthCredentials,
   ServiceBandwidthResponse,
   ServiceListResponse,
   ServiceProlongation,
@@ -17,6 +18,14 @@ export class ServicesResource {
   public async getBandwidth(code: string): Promise<ServiceBandwidthResponse> {
     return this.#httpClient.get<ServiceBandwidthResponse>(
       `/api/v1/services/${code}/bandwidth`,
+    );
+  }
+
+  public async getAuthCredentials(
+    code: string,
+  ): Promise<ServiceAuthCredentials> {
+    return this.#httpClient.get<ServiceAuthCredentials>(
+      `/api/v1/services/${code}/auth/credentials`,
     );
   }
 

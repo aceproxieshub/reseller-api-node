@@ -35,6 +35,11 @@ export interface ServiceAuthCredentials {
   username: string;
 }
 
+export interface UpdateServiceAuthCredentialsRequest {
+  password: string;
+  username: string;
+}
+
 export interface ServiceProlongation {
   durationDays: number;
   durationId: string;

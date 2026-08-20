@@ -3,13 +3,10 @@ export interface ApiErrorPayload {
   message?: string;
 }
 
-export interface PatchApiResponse {
-  error?: ApiErrorPayload | boolean;
+export interface ApiEnvelope {
+  data?: unknown;
+  error?: ApiErrorPayload | boolean | null;
   message?: string;
 }
 
-export interface ApiResponse<TData> {
-  data?: TData;
-  error?: ApiErrorPayload | boolean;
-  message?: string;
-}
+export type Decoder<T> = (value: unknown) => T;

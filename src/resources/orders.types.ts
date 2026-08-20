@@ -1,5 +1,5 @@
 export interface CreateOrderItem {
-  addons?: unknown[];
+  addons?: Record<string, unknown>;
   durationId?: string;
   options?: Record<string, unknown>;
   productId: string;
@@ -21,20 +21,17 @@ export interface Money {
   currency: string;
 }
 
-export interface Order {
+export interface OrderResponse {
   createdAt: string;
   description: string;
   id: string;
+  isRecurring: boolean;
   status: string;
   total: Money;
 }
 
 export interface OrderListResponse {
-  items: Order[];
+  items: OrderResponse[];
   limit: number;
   page: number;
-}
-
-export interface OrderDetails extends Order {
-  isRecurring: boolean;
 }

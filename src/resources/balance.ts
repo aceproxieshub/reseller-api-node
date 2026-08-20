@@ -1,14 +1,11 @@
+import { decodeBalance } from "../decoders.js";
 import { HttpClient } from "../http-client.js";
 import type { BalanceResponse } from "./balance.types.js";
 
 export class BalanceResource {
-  readonly #httpClient: HttpClient;
+  public constructor(private readonly httpClient: HttpClient) {}
 
-  public constructor(httpClient: HttpClient) {
-    this.#httpClient = httpClient;
-  }
-
-  public async get(): Promise<BalanceResponse> {
-    return this.#httpClient.get<BalanceResponse>("/api/v1/balance");
+  public getBalance(): Promise<BalanceResponse> {
+    return this.httpClient.get("/api/v1/balance", decodeBalance);
   }
 }

@@ -1,20 +1,54 @@
+export const Protocol = {
+  Http: "http",
+  Socks5: "socks5",
+} as const;
+
+export type Protocol = (typeof Protocol)[keyof typeof Protocol];
+
 export interface ServiceAmount {
   amount: number;
   unit: string;
 }
 
-export interface Service {
-  amount: ServiceAmount;
+export interface ServiceAuth {
+  method: string;
+}
+
+export interface ServicePrice {
+  amount: number;
+  currency: string;
+}
+
+export interface ServiceSummary {
+  amount: ServiceAmount | null;
+  auth: ServiceAuth | null;
   code: string;
-  createdAt: string;
-  expiredAt: string;
+  createdAt: string | null;
+  expiredAt: string | null;
   orderId: string;
-  startedAt: string;
+  startedAt: string | null;
   status: string;
 }
 
+export interface ServiceDetail {
+  amount: ServiceAmount;
+  auth: ServiceAuth;
+  code: string;
+  createdAt: string;
+  expiresAt: string | null;
+  isRecurring: boolean;
+  orderId: number;
+  orderUuid: string;
+  price: ServicePrice;
+  protocol: string;
+  serviceType: string;
+  startedAt: string | null;
+  status: string;
+  userId: string;
+}
+
 export interface ServiceListResponse {
-  items: Service[];
+  items: ServiceSummary[];
   limit: number;
   page: number;
 }
@@ -30,45 +64,65 @@ export interface ServiceBandwidthResponse {
   bandwidth: ServiceBandwidth;
 }
 
-export interface ServiceAuthCredentials {
+export interface ServiceCredentials {
   password: string;
   username: string;
 }
 
-export type ServiceAuthMethod = "combined" | "ip" | "password";
-
-export interface UpdateServiceAuthCredentialsRequest {
+export interface UpdateCredentialsRequest {
   password: string;
-  username: string;
+  username?: string;
 }
 
 export interface UpdateServiceAuthPayload {
-  method: ServiceAuthMethod;
+  method: string;
 }
 
 export interface UpdateServiceRequest {
-  auth: UpdateServiceAuthPayload;
+  auth?: UpdateServiceAuthPayload;
+  protocol?: Protocol;
 }
 
 export interface ServiceWhitelistedIp {
-  description: string;
+  description: string | null;
   ip: string;
 }
 
-export interface CreateServiceWhitelistedIpRequest {
+export interface CreateWhitelistedIpRequest {
   ip: string;
 }
 
-export interface CreateServiceWhitelistedIpResponse {
-  ip: string;
+export interface CreateIpReplacementRequest {
+  locations?: string[];
 }
 
-export interface RequestServiceProlongation {
+export interface ServiceIpReplacement {
+  createdAt: string;
+  replacedAt: string | null;
+  status: string;
+  uuid: string;
+}
+
+export interface ServiceIpReplacementCount {
+  count: number;
+}
+
+export interface ServiceIpReplacementLocation {
+  country: string;
+  id: string;
+  location: string;
+}
+
+export interface ServiceIpReplacementLocations {
+  locations: ServiceIpReplacementLocation[];
+}
+
+export interface CreateProlongationRequest {
   durationId: string;
   quantity: number;
 }
 
-export interface ServiceProlongationRequestResponse {
+export interface CreateProlongationResponse {
   durationId: string;
   newExpirationDate: string;
   quantity: number;

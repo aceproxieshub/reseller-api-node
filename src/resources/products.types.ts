@@ -1,13 +1,17 @@
 export interface ProductDuration {
+  durationDays: number;
   id: string;
   name: string;
   price: number;
 }
 
 export interface Product {
-  durations: ProductDuration[];
+  addons: unknown;
+  durations: ProductDuration[] | null;
   id: string;
   name: string;
+  options: Record<string, unknown>;
+  price: number | null;
   type: string;
 }
 

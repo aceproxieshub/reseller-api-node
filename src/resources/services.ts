@@ -1,106 +1,237 @@
+import {
+  decodeBandwidth,
+  decodeCreateProlongation,
+  decodeCredentials,
+  decodeIpReplacement,
+  decodeIpReplacementCount,
+  decodeIpReplacementLocations,
+  decodeIpReplacements,
+  decodeProlongations,
+  decodeProxies,
+  decodeServiceDetail,
+  decodeServiceList,
+  decodeWhitelistedIp,
+  decodeWhitelistedIps,
+} from "../decoders.js";
+import { ApiError, ValidationError } from "../errors.js";
 import { HttpClient } from "../http-client.js";
-import type {
-  CreateServiceWhitelistedIpRequest,
-  CreateServiceWhitelistedIpResponse,
-  RequestServiceProlongation,
-  Service,
-  ServiceAuthCredentials,
-  ServiceBandwidthResponse,
-  ServiceListResponse,
-  ServiceProlongation,
-  ServiceProlongationRequestResponse,
-  ServiceProxy,
-  ServiceWhitelistedIp,
-  UpdateServiceRequest,
-  UpdateServiceAuthCredentialsRequest,
+import type { PaginationOptions } from "../types/client.js";
+import {
+  assertIpAddress,
+  assertNonEmptyString,
+  assertPositiveInteger,
+  encodePath,
+} from "../validation.js";
+import { ResidentialResource } from "./residential.js";
+import {
+  Protocol,
+  type CreateIpReplacementRequest,
+  type CreateProlongationRequest,
+  type CreateProlongationResponse,
+  type CreateWhitelistedIpRequest,
+  type ServiceBandwidthResponse,
+  type ServiceCredentials,
+  type ServiceDetail,
+  type ServiceIpReplacement,
+  type ServiceIpReplacementCount,
+  type ServiceIpReplacementLocations,
+  type ServiceListResponse,
+  type ServiceProlongation,
+  type ServiceProxy,
+  type ServiceWhitelistedIp,
+  type UpdateCredentialsRequest,
+  type UpdateServiceRequest,
 } from "./services.types.js";
 
 export class ServicesResource {
-  readonly #httpClient: HttpClient;
+  public readonly residential: ResidentialResource;
 
-  public constructor(httpClient: HttpClient) {
-    this.#httpClient = httpClient;
+  public constructor(private readonly httpClient: HttpClient) {
+    this.residential = new ResidentialResource(httpClient);
   }
 
-  public async getBandwidth(code: string): Promise<ServiceBandwidthResponse> {
-    return this.#httpClient.get<ServiceBandwidthResponse>(
-      `/api/v1/services/${code}/bandwidth`,
+  public list(options: PaginationOptions = {}): Promise<ServiceListResponse> {
+    const query = new URLSearchParams();
+    if (options.page !== undefined) {
+      assertPositiveInteger(options.page, "page");
+      query.set("page", String(options.page));
+    }
+    if (options.limit !== undefined) {
+      assertPositiveInteger(options.limit, "limit");
+      query.set("limit", String(options.limit));
+    }
+    const queryString = query.toString();
+    const path =
+      queryString === ""
+        ? "/api/v1/services"
+        : `/api/v1/services?${queryString}`;
+    return this.httpClient.get(path, decodeServiceList);
+  }
+
+  public async find(code: string): Promise<ServiceDetail | null> {
+    return this.nullableGet(
+      `/api/v1/services/${encodePath(code, "service code")}`,
+      decodeServiceDetail,
     );
   }
 
-  public async getAuthCredentials(
+  public async getBandwidth(
     code: string,
-  ): Promise<ServiceAuthCredentials> {
-    return this.#httpClient.get<ServiceAuthCredentials>(
-      `/api/v1/services/${code}/auth/credentials`,
+  ): Promise<ServiceBandwidthResponse | null> {
+    return this.nullableGet(
+      `/api/v1/services/${encodePath(code, "service code")}/bandwidth`,
+      decodeBandwidth,
     );
   }
 
-  public async updateAuthCredentials(
+  public async getCredentials(
     code: string,
-    payload: UpdateServiceAuthCredentialsRequest,
-  ): Promise<ServiceAuthCredentials> {
-    return this.#httpClient.putJson<
-      ServiceAuthCredentials,
-      UpdateServiceAuthCredentialsRequest
-    >(`/api/v1/services/${code}/auth/credentials`, payload);
+  ): Promise<ServiceCredentials | null> {
+    return this.nullableGet(
+      `/api/v1/services/${encodePath(code, "service code")}/auth/credentials`,
+      decodeCredentials,
+    );
   }
 
-  public async getAuthWhitelistedIps(
+  public updateCredentials(
     code: string,
-  ): Promise<ServiceWhitelistedIp[]> {
-    return this.#httpClient.get<ServiceWhitelistedIp[]>(
-      `/api/v1/services/${code}/auth/whitelisted-ips`,
+    request: UpdateCredentialsRequest,
+  ): Promise<ServiceCredentials> {
+    assertNonEmptyString(request.password, "password");
+    return this.httpClient.putJson(
+      `/api/v1/services/${encodePath(code, "service code")}/auth/credentials`,
+      request,
+      decodeCredentials,
     );
   }
 
-  public async addAuthWhitelistedIp(
+  public getWhitelistedIps(code: string): Promise<ServiceWhitelistedIp[]> {
+    return this.httpClient.get(
+      `/api/v1/services/${encodePath(code, "service code")}/auth/whitelisted-ips`,
+      decodeWhitelistedIps,
+    );
+  }
+
+  public addWhitelistedIp(
     code: string,
-    payload: CreateServiceWhitelistedIpRequest,
-  ): Promise<CreateServiceWhitelistedIpResponse> {
-    return this.#httpClient.postJson<
-      CreateServiceWhitelistedIpResponse,
-      CreateServiceWhitelistedIpRequest
-    >(`/api/v1/services/${code}/auth/whitelisted-ips`, payload);
-  }
-
-  public async deleteAuthWhitelistedIp(code: string, ip: string): Promise<void> {
-    return this.#httpClient.delete(
-      `/api/v1/services/${code}/auth/whitelisted-ips/${ip}`,
+    request: CreateWhitelistedIpRequest,
+  ): Promise<ServiceWhitelistedIp> {
+    assertIpAddress(request.ip, "IP address");
+    return this.httpClient.postJson(
+      `/api/v1/services/${encodePath(code, "service code")}/auth/whitelisted-ips`,
+      request,
+      decodeWhitelistedIp,
     );
   }
 
-  public async getProxyList(code: string): Promise<ServiceProxy[]> {
-    return this.#httpClient.get<ServiceProxy[]>(
-      `/api/v1/services/${code}/proxy-list`,
+  public deleteWhitelistedIp(code: string, ip: string): Promise<void> {
+    assertIpAddress(ip, "IP address");
+    return this.httpClient.delete(
+      `/api/v1/services/${encodePath(code, "service code")}/auth/whitelisted-ips/${encodeURIComponent(ip)}`,
     );
   }
 
-  public async getProlongations(code: string): Promise<ServiceProlongation[]> {
-    return this.#httpClient.get<ServiceProlongation[]>(
-      `/api/v1/services/${code}/prolongations`,
+  public getIpReplacements(code: string): Promise<ServiceIpReplacement[]> {
+    return this.httpClient.get(
+      `/api/v1/services/${encodePath(code, "service code")}/ip-replacements`,
+      decodeIpReplacements,
     );
   }
 
-  public async requestProlongation(
+  public createIpReplacement(
     code: string,
-    payload: RequestServiceProlongation,
-  ): Promise<ServiceProlongationRequestResponse> {
-    return this.#httpClient.postJson<
-      ServiceProlongationRequestResponse,
-      RequestServiceProlongation
-    >(`/api/v1/services/${code}/prolongations`, payload);
+    request: CreateIpReplacementRequest = {},
+  ): Promise<ServiceIpReplacement> {
+    return this.httpClient.postJson(
+      `/api/v1/services/${encodePath(code, "service code")}/ip-replacements`,
+      request,
+      decodeIpReplacement,
+    );
   }
 
-  public async update(code: string, payload: UpdateServiceRequest): Promise<void> {
-    return this.#httpClient.patchJsonWithoutData(`/api/v1/services/${code}`, payload);
+  public getAvailableIpReplacements(
+    code: string,
+  ): Promise<ServiceIpReplacementCount> {
+    return this.httpClient.get(
+      `/api/v1/services/${encodePath(code, "service code")}/ip-replacements/available`,
+      decodeIpReplacementCount,
+    );
   }
 
-  public async get(code: string): Promise<Service> {
-    return this.#httpClient.get<Service>(`/api/v1/services/${code}`);
+  public getIpReplacementCount(
+    code: string,
+  ): Promise<ServiceIpReplacementCount> {
+    return this.httpClient.get(
+      `/api/v1/services/${encodePath(code, "service code")}/ip-replacements/count`,
+      decodeIpReplacementCount,
+    );
   }
 
-  public async list(): Promise<ServiceListResponse> {
-    return this.#httpClient.get<ServiceListResponse>("/api/v1/services");
+  public getIpReplacementLocations(
+    code: string,
+  ): Promise<ServiceIpReplacementLocations> {
+    return this.httpClient.get(
+      `/api/v1/services/${encodePath(code, "service code")}/ip-replacements/locations`,
+      decodeIpReplacementLocations,
+    );
+  }
+
+  public getProlongations(code: string): Promise<ServiceProlongation[]> {
+    return this.httpClient.get(
+      `/api/v1/services/${encodePath(code, "service code")}/prolongations`,
+      decodeProlongations,
+    );
+  }
+
+  public createProlongation(
+    code: string,
+    request: CreateProlongationRequest,
+  ): Promise<CreateProlongationResponse> {
+    assertNonEmptyString(request.durationId, "duration ID");
+    assertPositiveInteger(request.quantity, "quantity");
+    return this.httpClient.postJson(
+      `/api/v1/services/${encodePath(code, "service code")}/prolongations`,
+      request,
+      decodeCreateProlongation,
+    );
+  }
+
+  public getProxyList(code: string): Promise<ServiceProxy[]> {
+    return this.httpClient.get(
+      `/api/v1/services/${encodePath(code, "service code")}/proxy-list`,
+      decodeProxies,
+    );
+  }
+
+  public update(code: string, request: UpdateServiceRequest): Promise<void> {
+    if (request.auth === undefined && request.protocol === undefined) {
+      throw new ValidationError(
+        "The service update must contain at least one field.",
+      );
+    }
+    if (request.auth !== undefined)
+      assertNonEmptyString(request.auth.method, "service auth method");
+    if (
+      request.protocol !== undefined &&
+      !Object.values(Protocol).includes(request.protocol)
+    ) {
+      throw new ValidationError("The protocol must be http or socks5.");
+    }
+    return this.httpClient.patchJsonWithoutData(
+      `/api/v1/services/${encodePath(code, "service code")}`,
+      request,
+    );
+  }
+
+  private async nullableGet<T>(
+    path: string,
+    decoder: (value: unknown) => T,
+  ): Promise<T | null> {
+    try {
+      return await this.httpClient.get(path, decoder);
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 404) return null;
+      throw error;
+    }
   }
 }

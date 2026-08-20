@@ -1,5 +1,10 @@
 set shell := ["zsh", "-cu"]
 
+default: help
+
+help:
+  @cat docs/justfile.txt
+
 install:
   npm install
 

@@ -4,7 +4,22 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- Complete IP replacement and residential service API coverage
+- Runtime validation for inputs and successful API response shapes
+- Dedicated validation, API, transport, and invalid-response errors
+- GET-only retry handling with timeouts, bounded backoff, and `Retry-After` support
+- Node compatibility, mutation, staging, dependency update, security, and release tooling
+
+### Changed
+
+- Prepared the package as the breaking 1.0 contract using PHP-aligned operation names
+- Required a nonblank reseller token and corrected all request and response types to the current API
+- Moved `dotenv` to development dependencies so the published client has no runtime dependencies
+
 ## [0.4.0] - 2026-04-19
+
 ### Added
 
 - `services.addAuthWhitelistedIp()` resource implementation with tests and usage example

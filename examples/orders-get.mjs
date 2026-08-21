@@ -5,6 +5,6 @@ const client = createClient({
   token: process.env.ACEPROXIES_TOKEN,
 });
 
-const order = await client.orders.get("your-order-uuid");
+const order = await client.orders.find("your-order-uuid");
 
 console.log(order);

@@ -5,9 +5,6 @@ const client = createClient({
   token: process.env.ACEPROXIES_TOKEN,
 });
 
-await client.services.deleteAuthWhitelistedIp(
-  "your-service-code",
-  "203.0.113.10",
-);
+await client.services.deleteWhitelistedIp("your-service-code", "203.0.113.10");
 
 console.log("Whitelisted IP deleted");

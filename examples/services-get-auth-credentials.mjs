@@ -5,6 +5,6 @@ const client = createClient({
   token: process.env.ACEPROXIES_TOKEN,
 });
 
-const credentials = await client.services.getAuthCredentials("your-service-code");
+const credentials = await client.services.getCredentials("your-service-code");
 
 console.log(credentials);

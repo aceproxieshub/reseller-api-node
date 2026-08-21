@@ -5,6 +5,6 @@ const client = createClient({
   token: process.env.ACEPROXIES_TOKEN,
 });
 
-const version = await client.version.get();
+const version = await client.getApiVersion();
 
 console.log(version);

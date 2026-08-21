@@ -6,7 +6,7 @@ const client = createClient({
   token: process.env.ACEPROXIES_TOKEN,
 });
 
-const whitelistedIp = await client.services.addAuthWhitelistedIp(
+const whitelistedIp = await client.services.addWhitelistedIp(
   "your-service-code",
   {
     ip: "203.0.113.10",

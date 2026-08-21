@@ -15,6 +15,9 @@ build:
 test:
   npx vitest run --coverage
 
+mutation:
+  npm run test:mutation
+
 lint:
   npx eslint .
 

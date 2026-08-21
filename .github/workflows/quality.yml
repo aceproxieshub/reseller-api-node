@@ -48,4 +48,6 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - name: Verify Stryker configuration
+        run: test -f stryker.config.json
       - run: npm run test:mutation

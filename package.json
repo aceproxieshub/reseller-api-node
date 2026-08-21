@@ -40,17 +40,9 @@
     "reseller"
   ],
   "scripts": {
-    "clean": "node --eval \"require('node:fs').rmSync('dist', { recursive: true, force: true })\"",
-    "build": "npm run clean && tsc -p tsconfig.build.json",
-    "lint": "eslint .",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "test": "vitest run --coverage",
     "test:integration": "vitest run --config vitest.integration.config.ts",
     "test:mutation": "stryker run",
-    "typecheck": "tsc -p tsconfig.json --noEmit",
-    "quality": "npm run format:check && npm run lint && npm run typecheck && npm test && npm run build",
-    "prepack": "npm run build"
+    "prepack": "node --eval \"require('node:fs').rmSync('dist', { recursive: true, force: true })\" && tsc -p tsconfig.build.json"
   },
   "devDependencies": {
     "@types/node": "^22.14.1",

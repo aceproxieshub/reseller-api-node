@@ -5,8 +5,7 @@ const client = createClient({
   token: process.env.ACEPROXIES_TOKEN,
 });
 
-const whitelistedIps = await client.services.getAuthWhitelistedIps(
-  "your-service-code",
-);
+const whitelistedIps =
+  await client.services.getWhitelistedIps("your-service-code");
 
 console.log(whitelistedIps);

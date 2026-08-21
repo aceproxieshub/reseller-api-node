@@ -1,33 +1,10 @@
-# Aceproxies Reseller API
+# Aceproxies Reseller API for Node.js
 
-Official TypeScript client for the Aceproxies reseller API. The package ships ESM JavaScript and type declarations for Node.js `>=18`.
+The official typed client for the Aceproxies reseller API. It ships ESM JavaScript and TypeScript declarations, uses the Node.js `fetch` implementation, and validates API responses before returning them to application code.
 
-## Overview
+## Requirements
 
-This client provides a typed interface for integrating with the Aceproxies reseller platform from Node.js applications and modern frontend stacks that rely on server-side API access.
-
-Currently available resources include:
-
-- `health.check()`
-- `balance.get()`
-- `orders.get(id)`
-- `orders.list()`
-- `orders.create()`
-- `products.list()`
-- `products.getTypes()`
-- `services.getAuthCredentials(code)`
-- `services.getAuthWhitelistedIps(code)`
-- `services.addAuthWhitelistedIp(code, payload)`
-- `services.deleteAuthWhitelistedIp(code, ip)`
-- `services.requestProlongation(code, payload)`
-- `services.updateAuthCredentials(code, payload)`
-- `services.update(code, payload)`
-- `services.getProxyList(code)`
-- `services.getBandwidth(code)`
-- `services.getProlongations(code)`
-- `services.get(code)`
-- `services.list()`
-- `version.get()`
+Node.js 18 or newer. The package is installable with npm or Yarn and has no runtime dependencies.
 
 ## Installation
 
@@ -35,62 +12,45 @@ Currently available resources include:
 npm install aceproxieshub/reseller-api-node
 ```
 
-or
-
 ```bash
 yarn add aceproxieshub/reseller-api-node
 ```
 
-## Quick Start
+## Getting started
 
 ```ts
 import { createClient } from "aceproxies-reseller-api";
 
-const client = createClient({
-  token: process.env.ACEPROXIES_TOKEN,
-});
+const client = createClient({ token: process.env.ACEPROXIES_TOKEN! });
+const health = await client.health.getHealth();
+const balance = await client.balance.getBalance();
 
-const health = await client.health.check();
-
-console.log(health.status);
+console.log(health.status, balance.balance, balance.currency);
 ```
 
-`baseUrl` is optional and defaults to the Aceproxies reseller API host.
+`baseUrl`, an alternative `fetch` implementation, and a positive `timeoutMs` can also be supplied. The timeout defaults to 30 seconds per attempt.
 
-## Examples
+## Resources
 
-Example scripts are available in the [examples](./examples) directory:
+- `client.getApiVersion()`
+- `client.health.getHealth()` and `client.balance.getBalance()`
+- `client.orders.list()`, `find()`, and `create()`
+- `client.products.list()` and `types()`
+- `client.services.list()`, `find()`, `getBandwidth()`, `getCredentials()`, `updateCredentials()`, `getWhitelistedIps()`, `addWhitelistedIp()`, `deleteWhitelistedIp()`, `getIpReplacements()`, `createIpReplacement()`, `getAvailableIpReplacements()`, `getIpReplacementCount()`, `getIpReplacementLocations()`, `getProlongations()`, `createProlongation()`, `getProxyList()`, and `update()`
+- `client.services.residential.countries()`, `rotationIntervals()`, `proxyRequests()`, `findProxyRequest()`, `createProxyRequest()`, `deleteProxyRequest()`, and `getProxyList()`
 
-- `examples/health-check.mjs`
-- `examples/balance-get.mjs`
-- `examples/orders-list.mjs`
-- `examples/orders-get.mjs`
-- `examples/orders-create.mjs`
-- `examples/products-list.mjs`
-- `examples/products-get-types.mjs`
-- `examples/services-get-auth-credentials.mjs`
-- `examples/services-get-auth-whitelisted-ips.mjs`
-- `examples/services-add-auth-whitelisted-ip.mjs`
-- `examples/services-delete-auth-whitelisted-ip.mjs`
-- `examples/services-request-prolongation.mjs`
-- `examples/services-update-auth-credentials.mjs`
-- `examples/services-update.mjs`
-- `examples/services-get-proxy-list.mjs`
-- `examples/services-get-bandwidth.mjs`
-- `examples/services-get-prolongations.mjs`
-- `examples/services-get.mjs`
-- `examples/services-list.mjs`
-- `examples/version-get.mjs`
+Orders and services accept `{ page, limit }` pagination options. Lookup methods named `find`, plus service bandwidth and credential lookup, return `null` for HTTP 404.
 
-To run an example locally:
+## Retry and error policy
 
-1. Copy `.env.dist` to `.env`
-2. Set `ACEPROXIES_TOKEN`
-3. Run the example script
+Read-only GET requests are attempted up to three times after transport failures, HTTP 429, and HTTP 5xx. Retries use bounded exponential jitter and honor `Retry-After` up to 30 seconds. Mutating requests are never automatically retried.
 
-```bash
-node examples/health-check.mjs
-```
+- `ValidationError` is thrown before transport for invalid public inputs.
+- `ApiError` exposes the HTTP status, optional API error code, and raw response body.
+- `TransportError` represents an exhausted fetch or timeout failure and preserves its cause.
+- `InvalidResponseError` represents malformed JSON or an incompatible successful response.
+
+Error bodies and responses can contain service or proxy credentials. Do not log them indiscriminately.
 
 ## Development
 

@@ -5,7 +5,7 @@ const client = createClient({
   token: process.env.ACEPROXIES_TOKEN,
 });
 
-const prolongation = await client.services.requestProlongation(
+const prolongation = await client.services.createProlongation(
   "your-service-code",
   {
     durationId: "duration-id",

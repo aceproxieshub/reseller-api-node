@@ -1,6 +1,15 @@
 import { ResellerApiClient } from "./client.js";
-export { ApiError } from "./errors.js";
-export type { ClientOptions } from "./types/client.js";
+
+export { ResellerApiClient };
+export {
+  ApiError,
+  InvalidResponseError,
+  TransportError,
+  ValidationError,
+} from "./errors.js";
+export { RotationInterval } from "./resources/residential.types.js";
+export { Protocol } from "./resources/services.types.js";
+export type { ClientOptions, PaginationOptions } from "./types/client.js";
 export type { BalanceResponse } from "./resources/balance.types.js";
 export type { HealthResponse } from "./resources/health.types.js";
 export type {
@@ -8,9 +17,8 @@ export type {
   CreateOrderRequest,
   CreateOrderResponse,
   Money,
-  Order,
-  OrderDetails,
   OrderListResponse,
+  OrderResponse,
 } from "./resources/orders.types.js";
 export type {
   Product,
@@ -18,27 +26,37 @@ export type {
   ProductTypesResponse,
 } from "./resources/products.types.js";
 export type {
-  CreateServiceWhitelistedIpRequest,
-  CreateServiceWhitelistedIpResponse,
-  RequestServiceProlongation,
-  Service,
+  CreateResidentialProxyRequest,
+  ResidentialCountry,
+  ResidentialProxy,
+  ResidentialProxyRequest,
+  ResidentialRotationIntervals,
+} from "./resources/residential.types.js";
+export type {
+  CreateIpReplacementRequest,
+  CreateProlongationRequest,
+  CreateProlongationResponse,
+  CreateWhitelistedIpRequest,
   ServiceAmount,
-  ServiceAuthCredentials,
-  ServiceAuthMethod,
+  ServiceAuth,
   ServiceBandwidth,
   ServiceBandwidthResponse,
+  ServiceCredentials,
+  ServiceDetail,
+  ServiceIpReplacement,
+  ServiceIpReplacementCount,
+  ServiceIpReplacementLocation,
+  ServiceIpReplacementLocations,
   ServiceListResponse,
+  ServicePrice,
   ServiceProlongation,
-  ServiceProlongationRequestResponse,
   ServiceProxy,
+  ServiceSummary,
   ServiceWhitelistedIp,
+  UpdateCredentialsRequest,
   UpdateServiceAuthPayload,
   UpdateServiceRequest,
-  UpdateServiceAuthCredentialsRequest,
 } from "./resources/services.types.js";
-export type { VersionResponse } from "./resources/version.types.js";
-
-export { ResellerApiClient };
 
 export function createClient(
   options: import("./types/client.js").ClientOptions,

@@ -5,7 +5,7 @@ const client = createClient({
   token: process.env.ACEPROXIES_TOKEN,
 });
 
-const credentials = await client.services.updateAuthCredentials(
+const credentials = await client.services.updateCredentials(
   "your-service-code",
   {
     username: "new-username",

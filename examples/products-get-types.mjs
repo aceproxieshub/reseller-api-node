@@ -5,6 +5,6 @@ const client = createClient({
   token: process.env.ACEPROXIES_TOKEN,
 });
 
-const productTypes = await client.products.getTypes();
+const productTypes = await client.products.types();
 
 console.log(productTypes);

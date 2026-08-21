@@ -1,20 +1,37 @@
-import type { ApiErrorPayload, PatchApiResponse } from "./types/api.js";
+export class ValidationError extends TypeError {
+  public constructor(message: string) {
+    super(message);
+    this.name = "ValidationError";
+  }
+}
 
 export class ApiError extends Error {
-  public readonly status: number;
-  public readonly code: string | undefined;
-
   public constructor(
     message: string,
-    status: number,
-    error?: ApiErrorPayload | PatchApiResponse,
+    public readonly status: number,
+    public readonly code?: string,
+    public readonly body?: string,
   ) {
     super(message);
     this.name = "ApiError";
-    this.status = status;
-    this.code =
-      error && typeof error === "object" && "code" in error
-        ? (error.code as string | undefined)
-        : undefined;
+  }
+}
+
+export class TransportError extends Error {
+  public constructor(message: string, options?: ErrorOptions) {
+    super(message, options);
+    this.name = "TransportError";
+  }
+}
+
+export class InvalidResponseError extends Error {
+  public constructor(
+    message: string,
+    public readonly status: number,
+    public readonly body: string,
+    options?: ErrorOptions,
+  ) {
+    super(message, options);
+    this.name = "InvalidResponseError";
   }
 }

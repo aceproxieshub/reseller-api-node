@@ -5,6 +5,6 @@ const client = createClient({
   token: process.env.ACEPROXIES_TOKEN,
 });
 
-const health = await client.health.check();
+const health = await client.health.getHealth();
 
 console.log(health);

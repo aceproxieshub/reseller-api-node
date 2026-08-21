@@ -1,0 +1,53 @@
+name: Quality
+
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm audit --audit-level=high
+      - name: Check formatting
+        run: npx prettier --check .
+      - name: Lint
+        run: npx eslint .
+      - name: Type check
+        run: npx tsc -p tsconfig.json --noEmit
+      - name: Test
+        run: npx vitest run --coverage
+      - name: Build
+        run: >
+          node --eval "require('node:fs').rmSync('dist', { recursive: true, force: true })" &&
+          npx tsc -p tsconfig.build.json
+      - run: npm pack --dry-run
+
+  mutation:
+    needs: quality
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Verify Stryker configuration
+        run: test -f stryker.config.json
+      - run: npm run test:mutation

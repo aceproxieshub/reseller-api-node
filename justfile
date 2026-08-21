@@ -9,16 +9,23 @@ install:
   npm install
 
 build:
-  npm run build
+  node --eval "require('node:fs').rmSync('dist', { recursive: true, force: true })"
+  npx tsc -p tsconfig.build.json
 
 test:
-  npm run test
+  npx vitest run --coverage
+
+mutation:
+  npm run test:mutation
 
 lint:
-  npm run lint
+  npx eslint .
 
 format:
-  npm run format
+  npx prettier --write .
+
+format-check:
+  npx prettier --check .
 
 typecheck:
-  npm run typecheck
+  npx tsc -p tsconfig.json --noEmit

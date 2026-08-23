@@ -1,0 +1,46 @@
+name: Node compatibility
+
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: compatibility-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  compatibility:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [18, 20, 22, 24, 26]
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Type check
+        run: npx tsc -p tsconfig.json --noEmit
+      - name: Test
+        run: npx vitest run --coverage
+      - name: Build
+        run: >
+          node --eval "require('node:fs').rmSync('dist', { recursive: true, force: true })" &&
+          npx tsc -p tsconfig.build.json
+      - name: Verify packed ESM consumer
+        shell: bash
+        run: |
+          package_file=$(npm pack --silent)
+          consumer_dir=$(mktemp -d)
+          cd "$consumer_dir"
+          npm init --yes >/dev/null
+          npm install "$GITHUB_WORKSPACE/$package_file" >/dev/null
+          node --input-type=module --eval "import { createClient } from 'aceproxies-reseller-api'; if (typeof createClient !== 'function') process.exit(1)"

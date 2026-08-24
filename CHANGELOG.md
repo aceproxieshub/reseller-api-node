@@ -6,6 +6,8 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- Optional product and service type filtering through `ProductType`.
+- Service `type` fields on list and detail responses, with `serviceType` retained as a compatibility alias.
 - Complete IP replacement and residential service API coverage
 - Runtime validation for inputs and successful API response shapes
 - Dedicated validation, API, transport, and invalid-response errors

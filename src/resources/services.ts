@@ -17,6 +17,10 @@ import { ApiError, ValidationError } from "../errors.js";
 import { HttpClient } from "../http-client.js";
 import type { PaginationOptions } from "../types/client.js";
 import {
+  ProductType,
+  type ProductType as ProductTypeValue,
+} from "./products.types.js";
+import {
   assertIpAddress,
   assertNonEmptyString,
   assertPositiveInteger,
@@ -50,7 +54,9 @@ export class ServicesResource {
     this.residential = new ResidentialResource(httpClient);
   }
 
-  public list(options: PaginationOptions = {}): Promise<ServiceListResponse> {
+  public list(
+    options: PaginationOptions & { type?: ProductTypeValue } = {},
+  ): Promise<ServiceListResponse> {
     const query = new URLSearchParams();
     if (options.page !== undefined) {
       assertPositiveInteger(options.page, "page");
@@ -59,6 +65,10 @@ export class ServicesResource {
     if (options.limit !== undefined) {
       assertPositiveInteger(options.limit, "limit");
       query.set("limit", String(options.limit));
+    }
+    if (options.type !== undefined) {
+      assertProductType(options.type, "service type");
+      query.set("type", options.type);
     }
     const queryString = query.toString();
     const path =
@@ -233,5 +243,17 @@ export class ServicesResource {
       if (error instanceof ApiError && error.status === 404) return null;
       throw error;
     }
+  }
+}
+
+function assertProductType(
+  value: string,
+  name: string,
+): asserts value is ProductTypeValue {
+  if (typeof value !== "string" || value.trim() === "") {
+    throw new ValidationError(`The ${name} must not be empty.`);
+  }
+  if (!Object.values(ProductType).includes(value as ProductTypeValue)) {
+    throw new ValidationError(`The ${name} is not supported.`);
   }
 }

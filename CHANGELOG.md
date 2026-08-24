@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-08-24
+
 ### Added
 
 - Optional product and service type filtering through `ProductType`.

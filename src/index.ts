@@ -7,6 +7,7 @@ export {
   TransportError,
   ValidationError,
 } from "./errors.js";
+export { ProductType } from "./resources/products.types.js";
 export { RotationInterval } from "./resources/residential.types.js";
 export { Protocol } from "./resources/services.types.js";
 export type { ClientOptions, PaginationOptions } from "./types/client.js";

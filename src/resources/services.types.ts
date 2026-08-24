@@ -28,6 +28,7 @@ export interface ServiceSummary {
   orderId: string;
   startedAt: string | null;
   status: string;
+  type: string | null;
 }
 
 export interface ServiceDetail {
@@ -41,7 +42,9 @@ export interface ServiceDetail {
   orderUuid: string;
   price: ServicePrice;
   protocol: string;
+  /** @deprecated Use `type` instead. */
   serviceType: string;
+  type: string;
   startedAt: string | null;
   status: string;
   userId: string;

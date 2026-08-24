@@ -35,11 +35,20 @@ console.log(health.status, balance.balance, balance.currency);
 - `client.getApiVersion()`
 - `client.health.getHealth()` and `client.balance.getBalance()`
 - `client.orders.list()`, `find()`, and `create()`
-- `client.products.list()` and `types()`
-- `client.services.list()`, `find()`, `getBandwidth()`, `getCredentials()`, `updateCredentials()`, `getWhitelistedIps()`, `addWhitelistedIp()`, `deleteWhitelistedIp()`, `getIpReplacements()`, `createIpReplacement()`, `getAvailableIpReplacements()`, `getIpReplacementCount()`, `getIpReplacementLocations()`, `getProlongations()`, `createProlongation()`, `getProxyList()`, and `update()`
+- `client.products.list(type?)` and `types()`
+- `client.services.list({ page?, limit?, type? })`, `find()`, `getBandwidth()`, `getCredentials()`, `updateCredentials()`, `getWhitelistedIps()`, `addWhitelistedIp()`, `deleteWhitelistedIp()`, `getIpReplacements()`, `createIpReplacement()`, `getAvailableIpReplacements()`, `getIpReplacementCount()`, `getIpReplacementLocations()`, `getProlongations()`, `getProxyList()`, and `update()`
 - `client.services.residential.countries()`, `rotationIntervals()`, `proxyRequests()`, `findProxyRequest()`, `createProxyRequest()`, `deleteProxyRequest()`, and `getProxyList()`
 
 Orders and services accept `{ page, limit }` pagination options. Lookup methods named `find`, plus service bandwidth and credential lookup, return `null` for HTTP 404.
+
+Use the exported `ProductType` constants when filtering products or services:
+
+```ts
+import { ProductType } from "aceproxies-reseller-api";
+
+await client.products.list(ProductType.ResidentialProxy);
+await client.services.list({ type: ProductType.DedicatedProxy });
+```
 
 ## Retry and error policy
 

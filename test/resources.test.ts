@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import {
+  ProductType,
   RotationInterval,
   ValidationError,
   createClient,
@@ -71,9 +72,19 @@ describe("orders and products", () => {
       price: null,
       durations: [{ id: "d", name: "Month", durationDays: 30, price: 10 }],
     };
-    await expect(setup([product]).api.products.list()).resolves.toEqual([
-      product,
-    ]);
+    const products = setup([product]);
+    await expect(products.api.products.list()).resolves.toEqual([product]);
+    await expect(
+      setup([product]).api.products.list(ProductType.ResidentialProxy),
+    ).resolves.toEqual([product]);
+    expect(String(products.fetchMock.mock.calls[0]?.[0])).toContain(
+      "/api/v1/products",
+    );
+    const filteredProducts = setup([product]);
+    await filteredProducts.api.products.list(ProductType.ResidentialProxy);
+    expect(String(filteredProducts.fetchMock.mock.calls[0]?.[0])).toContain(
+      "?type=residential_proxy",
+    );
     await expect(
       setup({ types: ["resi"] }).api.products.types(),
     ).resolves.toEqual({ types: ["resi"] });
@@ -94,6 +105,7 @@ describe("services", () => {
           createdAt: null,
           startedAt: null,
           expiredAt: null,
+          type: null,
         },
       ],
       page: 1,
@@ -111,12 +123,34 @@ describe("services", () => {
       price: { amount: 10, currency: "USD" },
       protocol: "http",
       serviceType: "dc_proxy",
+      type: "dc_proxy",
       startedAt: null,
       status: "active",
       userId: "u",
     };
     await expect(setup(detail).api.services.find("s")).resolves.toEqual(detail);
     await expect(setup({}, 404).api.services.find("s")).resolves.toBeNull();
+
+    const typedDetail = setup({
+      amount: { amount: 1, unit: "GB" },
+      auth: { method: "password" },
+      code: "s",
+      createdAt: "2026-01-01T00:00:00Z",
+      expiresAt: null,
+      isRecurring: false,
+      orderId: 1,
+      orderUuid: "o",
+      price: { amount: 10, currency: "USD" },
+      protocol: "http",
+      type: "residential_proxy",
+      startedAt: null,
+      status: "active",
+      userId: "u",
+    });
+    await expect(typedDetail.api.services.find("s")).resolves.toMatchObject({
+      type: "residential_proxy",
+      serviceType: "residential_proxy",
+    });
   });
 
   it("covers service reads", async () => {
@@ -201,6 +235,36 @@ describe("services", () => {
         durationId: "",
         quantity: 1,
       }),
+    ).toThrow(ValidationError);
+  });
+
+  it("filters services by type with pagination", async () => {
+    const services = setup({ items: [], page: 2, limit: 5 });
+    await expect(
+      services.api.services.list({
+        page: 2,
+        limit: 5,
+        type: ProductType.DedicatedProxy,
+      }),
+    ).resolves.toEqual({ items: [], page: 2, limit: 5 });
+    expect(String(services.fetchMock.mock.calls[0]?.[0])).toContain(
+      "?page=2&limit=5&type=dedicated_proxy",
+    );
+  });
+
+  it("rejects unsupported product and service types", async () => {
+    const api = setup({}).api;
+    expect(() =>
+      api.products.list("unsupported" as ProductType),
+    ).toThrow(ValidationError);
+    expect(() =>
+      api.services.list({ type: "unsupported" as ProductType }),
+    ).toThrow(ValidationError);
+    expect(() =>
+      api.products.list("  " as ProductType),
+    ).toThrow(ValidationError);
+    expect(() =>
+      api.services.list({ type: "  " as ProductType }),
     ).toThrow(ValidationError);
   });
 });

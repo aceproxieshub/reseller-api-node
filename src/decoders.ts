@@ -242,6 +242,10 @@ function serviceSummary(value: unknown): ServiceSummary {
     orderId: string(data.orderId, "service.orderId"),
     startedAt: nullableDate(data.startedAt, "service.startedAt"),
     status: string(data.status, "service.status"),
+    type:
+      data.type === null || typeof data.type === "undefined"
+        ? null
+        : string(data.type, "service.type"),
   };
 }
 
@@ -267,9 +271,13 @@ export function decodeServiceDetail(value: unknown): ServiceDetail {
     orderUuid: string(data.orderUuid, "service.orderUuid"),
     price: servicePrice(data.price),
     protocol: string(data.protocol, "service.protocol"),
-    serviceType: string(data.serviceType, "service.serviceType"),
+    serviceType: string(
+      data.type ?? data.serviceType,
+      "service.type",
+    ),
     startedAt: nullableDate(data.startedAt, "service.startedAt"),
     status: string(data.status, "service.status"),
+    type: string(data.type ?? data.serviceType, "service.type"),
     userId: string(data.userId, "service.userId"),
   };
 }

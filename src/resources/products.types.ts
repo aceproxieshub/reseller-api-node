@@ -1,3 +1,14 @@
+export const ProductType = {
+  DedicatedProxy: "dedicated_proxy",
+  ResidentialProxy: "residential_proxy",
+  PaygResidentialProxy: "payg_residential_proxy",
+  StaticResidentialProxy: "static_residential_proxy",
+  MobileProxy: "mobile_proxy",
+} as const;
+
+export type ProductType =
+  (typeof ProductType)[keyof typeof ProductType];
+
 export interface ProductDuration {
   durationDays: number;
   id: string;

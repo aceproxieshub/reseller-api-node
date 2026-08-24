@@ -1,5 +1,9 @@
 # Aceproxies Reseller API for Node.js
 
+[![Quality](https://github.com/aceproxieshub/reseller-api-node/actions/workflows/quality.yml/badge.svg?branch=master)](https://github.com/aceproxieshub/reseller-api-node/actions/workflows/quality.yml)
+[![Node compatibility](https://github.com/aceproxieshub/reseller-api-node/actions/workflows/node-compatibility.yml/badge.svg?branch=master)](https://github.com/aceproxieshub/reseller-api-node/actions/workflows/node-compatibility.yml)
+[![License](https://img.shields.io/github/license/aceproxieshub/reseller-api-node.svg)](https://github.com/aceproxieshub/reseller-api-node/blob/master/LICENSE)
+
 The official typed client for the Aceproxies reseller API. It ships ESM JavaScript and TypeScript declarations, uses the Node.js `fetch` implementation, and validates API responses before returning them to application code.
 
 ## Requirements

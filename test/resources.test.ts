@@ -252,20 +252,20 @@ describe("services", () => {
     );
   });
 
-  it("rejects unsupported product and service types", async () => {
+  it("rejects unsupported product and service types", () => {
     const api = setup({}).api;
-    expect(() =>
-      api.products.list("unsupported" as ProductType),
-    ).toThrow(ValidationError);
+    expect(() => api.products.list("unsupported" as ProductType)).toThrow(
+      ValidationError,
+    );
     expect(() =>
       api.services.list({ type: "unsupported" as ProductType }),
     ).toThrow(ValidationError);
-    expect(() =>
-      api.products.list("  " as ProductType),
-    ).toThrow(ValidationError);
-    expect(() =>
-      api.services.list({ type: "  " as ProductType }),
-    ).toThrow(ValidationError);
+    expect(() => api.products.list("  " as ProductType)).toThrow(
+      ValidationError,
+    );
+    expect(() => api.services.list({ type: "  " as ProductType })).toThrow(
+      ValidationError,
+    );
   });
 });
 

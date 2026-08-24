@@ -271,10 +271,7 @@ export function decodeServiceDetail(value: unknown): ServiceDetail {
     orderUuid: string(data.orderUuid, "service.orderUuid"),
     price: servicePrice(data.price),
     protocol: string(data.protocol, "service.protocol"),
-    serviceType: string(
-      data.type ?? data.serviceType,
-      "service.type",
-    ),
+    serviceType: string(data.type ?? data.serviceType, "service.type"),
     startedAt: nullableDate(data.startedAt, "service.startedAt"),
     status: string(data.status, "service.status"),
     type: string(data.type ?? data.serviceType, "service.type"),

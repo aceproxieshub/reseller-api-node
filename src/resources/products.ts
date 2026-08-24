@@ -29,7 +29,10 @@ export class ProductsResource {
   }
 }
 
-function assertProductType(value: string, name: string): asserts value is ProductType {
+function assertProductType(
+  value: string,
+  name: string,
+): asserts value is ProductType {
   if (typeof value !== "string" || value.trim() === "") {
     throw new ValidationError(`The ${name} must not be empty.`);
   }

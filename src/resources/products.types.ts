@@ -6,8 +6,7 @@ export const ProductType = {
   MobileProxy: "mobile_proxy",
 } as const;
 
-export type ProductType =
-  (typeof ProductType)[keyof typeof ProductType];
+export type ProductType = (typeof ProductType)[keyof typeof ProductType];
 
 export interface ProductDuration {
   durationDays: number;
